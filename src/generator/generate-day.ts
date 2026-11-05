@@ -20,7 +20,7 @@ import {
 } from "../schedule/schedule.ts";
 import { BUDGET_GROUP_ORDER, budgetGroup } from "../scoring/budget.ts";
 import { rankPlaces } from "../scoring/score.ts";
-import { distanceKm } from "../travel/travel-time.ts";
+import { distanceKm, type TransportMode } from "../travel/travel-time.ts";
 
 /** Why a Stop is on the day. Must-Sees and hand-added Stops survive "Regenerate day". */
 export type StopOrigin = "generated" | "must-see" | "added";
@@ -36,7 +36,8 @@ export type PlannedStop = {
 
 export type PlannedDay = {
   date: IsoDate;
-  baseCity: BaseCity;
+  /** null for a day the traveler is building by hand from empty. */
+  baseCity: BaseCity | null;
   /** True when the generator picked the city (no Day Area pinned). */
   chosenForYou: boolean;
   stops: PlannedStop[];
@@ -105,13 +106,10 @@ export const generateDay = ({
   const keptIds = new Set(kept.map((s) => s.placeId));
   const sightsTarget = SIGHTS_PER_PACE[prefs.pace];
 
-  const scheduleOf = (stops: PlannedStop[]): ScheduledDay =>
-    scheduleDay({
-      date,
-      window,
-      mode: prefs.mode,
-      stops: toStopInputs(stops, placesById),
-    });
+  const context: DayContext = { date, window, mode: prefs.mode, placesById };
+  const scheduleOf = (stops: PlannedStop[]) => scheduleStops(stops, context);
+  const insertBest = (stops: PlannedStop[], stop: PlannedStop, force = false) =>
+    insertStop(stops, stop, context, force);
 
   // Every Place that could still be suggested: unused, open today, not excluded
   // by rating. Ordered by budget group first, then by score (sort is stable).
@@ -127,39 +125,6 @@ export const generateDay = ({
   const pendingMustSees = prefs.mustSees.filter(
     (id) => placesById.has(id) && !used.has(id) && !keptIds.has(id),
   );
-
-  // Tries `stop` at every position. Returns the arrangement that ends earliest
-  // without adding a Warning or pushing a meal late, or null if none does.
-  // `force` (for Must-Sees) accepts the least-bad position instead.
-  const insertBest = (
-    stops: PlannedStop[],
-    stop: PlannedStop,
-    force = false,
-  ): PlannedStop[] | null => {
-    const baseline = scheduleOf(stops).warningCount;
-
-    // One trial per position: before the first Stop, between each pair, after the last.
-    const trials = Array.from({ length: stops.length + 1 }, (_, i) => [
-      ...stops.slice(0, i),
-      stop,
-      ...stops.slice(i),
-    ]);
-    // reduce, not forEach: this keeps "the best so far", and TypeScript can't
-    // follow a variable reassigned inside a forEach callback.
-    const best = trials.reduce<{
-      stops: PlannedStop[];
-      schedule: ScheduledDay;
-    } | null>((best, trial) => {
-      const schedule = scheduleOf(trial);
-      const clean =
-        schedule.warningCount <= baseline && mealsOnTime(trial, schedule);
-      if (!clean && !force) return best;
-      return best === null || isBetter(schedule, best.schedule, force)
-        ? { stops: trial, schedule }
-        : best;
-    }, null);
-    return best?.stops ?? null;
-  };
 
   /** The Stops this day would get in `city`: kept, Must-Sees, meals, then sights. */
   const buildStops = (city: BaseCity): PlannedStop[] => {
@@ -221,7 +186,9 @@ export const generateDay = ({
       candidates: prefs.tripArea.length > 0 ? prefs.tripArea : BASE_CITY_NAMES,
       tripAreaChosen: prefs.tripArea.length > 0,
       previousCity: previousDayBefore(otherDays, date)?.baseCity ?? null,
-      visited: new Set(otherDays.map((d) => d.baseCity)),
+      visited: new Set(
+        otherDays.flatMap((d) => (d.baseCity ? [d.baseCity] : [])),
+      ),
       mustSeeCities: new Set(
         pendingMustSees.map((id) => baseCityOf(placesById.get(id)!)),
       ),
@@ -245,6 +212,58 @@ export const generateDay = ({
 
 const sightCount = (stops: PlannedStop[]): number =>
   stops.filter((s) => s.meal === null).length;
+
+/** What scheduling a day needs besides its Stops. */
+export type DayContext = {
+  date: IsoDate;
+  window: DayWindow;
+  mode: TransportMode;
+  placesById: Map<string, CleanPlace>;
+};
+
+/** Schedules planned Stops (Meal Stops wait for their meal window). */
+export const scheduleStops = (
+  stops: PlannedStop[],
+  { date, window, mode, placesById }: DayContext,
+): ScheduledDay =>
+  scheduleDay({ date, window, mode, stops: toStopInputs(stops, placesById) });
+
+/**
+ * Tries `stop` at every position. Returns the arrangement that ends earliest
+ * without adding a Warning or pushing a meal late, or null if none does.
+ * `force` (Must-Sees, or a Place the traveler adds) always places it, at the
+ * position with the fewest Warnings, then the earliest end.
+ */
+export const insertStop = (
+  stops: PlannedStop[],
+  stop: PlannedStop,
+  context: DayContext,
+  force = false,
+): PlannedStop[] | null => {
+  const baseline = scheduleStops(stops, context).warningCount;
+
+  // One trial per position: before the first Stop, between each pair, after the last.
+  const trials = Array.from({ length: stops.length + 1 }, (_, i) => [
+    ...stops.slice(0, i),
+    stop,
+    ...stops.slice(i),
+  ]);
+  // reduce, not forEach: this keeps "the best so far", and TypeScript can't
+  // follow a variable reassigned inside a forEach callback.
+  const best = trials.reduce<{
+    stops: PlannedStop[];
+    schedule: ScheduledDay;
+  } | null>((best, trial) => {
+    const schedule = scheduleStops(trial, context);
+    const clean =
+      schedule.warningCount <= baseline && mealsOnTime(trial, schedule);
+    if (!clean && !force) return best;
+    return best === null || isBetter(schedule, best.schedule, force)
+      ? { stops: trial, schedule }
+      : best;
+  }, null);
+  return best?.stops ?? null;
+};
 
 /**
  * Compares two arrangements. Normally the one that ends the day earlier wins.

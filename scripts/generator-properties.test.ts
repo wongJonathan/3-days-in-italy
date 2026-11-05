@@ -10,6 +10,7 @@ import {
   MEAL_WINDOWS,
   type GeneratedDay,
 } from "../src/generator/generate-day.ts";
+import { addDays } from "../src/hours/calendar.ts";
 import { baseCityOf } from "../src/preferences/base-cities.ts";
 import {
   DEFAULT_PREFERENCES,
@@ -29,11 +30,6 @@ const places = JSON.parse(
   ),
 ) as CleanPlace[];
 const byId = new Map(places.map((p) => [p.id, p]));
-
-const addDays = (iso: string, days: number): string => {
-  const [y, m, d] = iso.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
-};
 
 // Every 9th day for a year: covers every season and, since 9 isn't a multiple
 // of 7, every weekday.

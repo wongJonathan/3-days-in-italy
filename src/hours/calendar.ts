@@ -22,3 +22,11 @@ export const todayInRome = (now: Date): IsoDate => {
   );
   return `${parts.year}-${parts.month}-${parts.day}`;
 };
+
+/** The calendar date `days` after `date`. Done in UTC so time zones can't shift it. */
+export const addDays = (date: IsoDate, days: number): IsoDate => {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days))
+    .toISOString()
+    .slice(0, 10);
+};

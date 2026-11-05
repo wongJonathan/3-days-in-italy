@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { todayInRome, weekdayOf } from "./calendar.ts";
+import { addDays, todayInRome, weekdayOf } from "./calendar.ts";
 
 describe("weekdayOf", () => {
   it("returns 0 for Sunday through 6 for Saturday", () => {
@@ -24,5 +24,18 @@ describe("todayInRome", () => {
     // Rome is UTC+1 in winter (CET).
     expect(todayInRome(new Date("2026-01-14T22:30:00Z"))).toBe("2026-01-14");
     expect(todayInRome(new Date("2026-01-14T23:30:00Z"))).toBe("2026-01-15");
+  });
+});
+
+describe("addDays", () => {
+  it("adds days across month and year ends", () => {
+    expect(addDays("2026-11-09", 1)).toBe("2026-11-10");
+    expect(addDays("2026-11-30", 1)).toBe("2026-12-01");
+    expect(addDays("2026-12-31", 1)).toBe("2027-01-01");
+  });
+
+  it("handles a leap day", () => {
+    expect(addDays("2028-02-28", 1)).toBe("2028-02-29");
+    expect(addDays("2027-02-28", 1)).toBe("2027-03-01");
   });
 });
