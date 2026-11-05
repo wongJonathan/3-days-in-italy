@@ -6,7 +6,13 @@ import {
   type Preferences,
 } from "../preferences/preferences.ts";
 import { DEFAULT_DAY_WINDOW } from "../schedule/schedule.ts";
-import { createTrip, tripReducer, type Trip, type TripAction } from "./trip.ts";
+import {
+  createTrip,
+  tripReducer,
+  unplannedMustSees,
+  type Trip,
+  type TripAction,
+} from "./trip.ts";
 
 /** A made-up Place ~220 m × slot from the city centre; open daily, 60 min. */
 const place = (
@@ -291,5 +297,20 @@ describe("tripReducer", () => {
       const off = apply(on, { type: "toggleMustSee", placeId: "rome9" });
       expect(off.prefs.mustSees).toEqual([]);
     });
+  });
+});
+
+describe("unplannedMustSees", () => {
+  it("lists Must-Sees that no day's plan contains yet", () => {
+    const trip = apply(newTrip({ prefs: { mustSees: ["rome15"] } }), {
+      type: "toggleMustSee",
+      placeId: "venice1",
+    });
+    // rome15 was planned into Day 1; venice1 is not on any day.
+    expect(unplannedMustSees(trip)).toEqual(["venice1"]);
+  });
+
+  it("is empty when every Must-See is planned", () => {
+    expect(unplannedMustSees(newTrip())).toEqual([]);
   });
 });

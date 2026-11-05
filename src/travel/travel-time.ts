@@ -9,7 +9,13 @@ export type Coordinates = { latitude: number; longitude: number };
 export type TravelPoint = Coordinates & { city: string };
 
 /** An estimate, always shown as "est.": straight-line distance, not real routing. */
-export type TravelTime = { minutes: number; band: TravelBand; km: number };
+export type TravelTime = {
+  minutes: number;
+  band: TravelBand;
+  km: number;
+  /** The mode actually used: public transport in car-free cities, even in Rental Car mode. */
+  mode: TransportMode;
+};
 
 /**
  * One way of covering distance:
@@ -102,5 +108,5 @@ export const travelTime = (
   const carFree =
     CAR_FREE_CITIES.has(from.city) || CAR_FREE_CITIES.has(to.city);
   const effectiveMode = carFree ? "public-transport" : mode;
-  return { ...minutesForDistance(km, effectiveMode), km };
+  return { ...minutesForDistance(km, effectiveMode), km, mode: effectiveMode };
 };

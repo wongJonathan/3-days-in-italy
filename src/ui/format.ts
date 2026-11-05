@@ -41,3 +41,11 @@ export const formatTime = (minutes: number): string => {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(Math.floor(inDay / 60))}:${pad(inDay % 60)}`;
 };
+
+/** "09:30" (an <input type=time> value) → 570. null if empty or invalid. */
+export const parseTimeInput = (value: string): number | null => {
+  const match = /^(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [hours, minutes] = [Number(match[1]), Number(match[2])];
+  return hours < 24 && minutes < 60 ? hours * 60 + minutes : null;
+};

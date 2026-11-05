@@ -4,6 +4,7 @@ import {
   formatMonth,
   formatTime,
   formatWeekday,
+  parseTimeInput,
 } from "./format.ts";
 
 describe("formatDate", () => {
@@ -30,5 +31,18 @@ describe("formatTime", () => {
   it("wraps times past midnight", () => {
     expect(formatTime(1440)).toBe("00:00");
     expect(formatTime(1500)).toBe("01:00");
+  });
+});
+
+describe("parseTimeInput", () => {
+  it("reads an <input type=time> value as minutes", () => {
+    expect(parseTimeInput("09:30")).toBe(570);
+    expect(parseTimeInput("22:30")).toBe(1350);
+  });
+
+  it("returns null for an empty or invalid value", () => {
+    expect(parseTimeInput("")).toBeNull();
+    expect(parseTimeInput("25:00")).toBeNull();
+    expect(parseTimeInput("nope")).toBeNull();
   });
 });

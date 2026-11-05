@@ -266,3 +266,11 @@ export const tripReducer = (places: CleanPlace[]) => {
 
 const inRange = (items: unknown[], index: number): boolean =>
   Number.isInteger(index) && index >= 0 && index < items.length;
+
+/** Must-Sees that no day's plan contains yet, so the editor can say so (never silently dropped). */
+export const unplannedMustSees = (trip: Trip): string[] => {
+  const planned = new Set(
+    trip.days.flatMap((d) => d.plan?.stops.map((s) => s.placeId) ?? []),
+  );
+  return trip.prefs.mustSees.filter((id) => !planned.has(id));
+};

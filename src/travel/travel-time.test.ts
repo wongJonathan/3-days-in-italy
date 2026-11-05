@@ -163,6 +163,10 @@ describe("travelTime", () => {
       );
     });
 
+    it("reports the mode actually used, so labels can say 'water bus', not 'drive'", () => {
+      expect(travelTime(rialto, burano, CAR).mode).toBe("public-transport");
+    });
+
     it("uses Public Transport times when only one end is car-free (you can't drive to the door)", () => {
       expect(travelTime(padua, rialto, CAR)).toEqual(
         travelTime(padua, rialto, PT),
