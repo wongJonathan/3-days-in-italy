@@ -49,7 +49,7 @@ Interests are a curated set of dataset tags, shown as chips. Similar tags are me
 | Outdoors | `outdoors`, `active` |
 | Romantic | `romantic` |
 | Hidden Gem | `hidden-gem` |
-| Local Favorite | `local-favorite`, `local_favorite` |
+| Local Favorite | `local-favorite` (the clean data normalizes `local_favorite`) |
 | **Avoid Crowds** (computed) | raises the score of `quiet` and `hidden-gem`, lowers it for `tourist-heavy` |
 
 Some tags aren't shown as chips, either because other parts of the planner already cover them or because they don't describe an interest:
