@@ -7,7 +7,9 @@ describe("inSeason", () => {
   });
 
   describe("months", () => {
-    const aprilToOctober: SeasonalRule[] = [{ kind: "months", from: 4, to: 10 }];
+    const aprilToOctober: SeasonalRule[] = [
+      { kind: "months", from: 4, to: 10 },
+    ];
 
     it("includes the first and last month", () => {
       expect(inSeason(aprilToOctober, "2026-04-01")).toBe(true);
@@ -58,8 +60,12 @@ describe("inSeason", () => {
 
     it("does not count a Sunday on the 1st (its Saturday was last month)", () => {
       // November 2026 starts on Sunday.
-      expect(inSeason([{ kind: "nth-weekend", n: 1 }], "2026-11-01")).toBe(false);
-      expect(inSeason([{ kind: "nth-weekend", n: 1 }], "2026-11-07")).toBe(true);
+      expect(inSeason([{ kind: "nth-weekend", n: 1 }], "2026-11-01")).toBe(
+        false,
+      );
+      expect(inSeason([{ kind: "nth-weekend", n: 1 }], "2026-11-07")).toBe(
+        true,
+      );
     });
   });
 
@@ -74,13 +80,18 @@ describe("inSeason", () => {
 
   it("ignores hours-in-months (it changes hours, not the season)", () => {
     expect(
-      inSeason([{ kind: "hours-in-months", from: 6, to: 8, hours: "8:15-19:30" }], "2026-01-10"),
+      inSeason(
+        [{ kind: "hours-in-months", from: 6, to: 8, hours: "8:15-19:30" }],
+        "2026-01-10",
+      ),
     ).toBe(true);
   });
 });
 
 describe("seasonalHours", () => {
-  const summer: SeasonalRule[] = [{ kind: "hours-in-months", from: 6, to: 8, hours: "8:15-19:30" }];
+  const summer: SeasonalRule[] = [
+    { kind: "hours-in-months", from: 6, to: 8, hours: "8:15-19:30" },
+  ];
 
   it("returns the override inside its months", () => {
     expect(seasonalHours(summer, "2026-07-10")).toBe("8:15-19:30");
@@ -88,6 +99,8 @@ describe("seasonalHours", () => {
 
   it("returns null outside its months, or with no override", () => {
     expect(seasonalHours(summer, "2026-05-31")).toBeNull();
-    expect(seasonalHours([{ kind: "months", from: 4, to: 10 }], "2026-07-10")).toBeNull();
+    expect(
+      seasonalHours([{ kind: "months", from: 4, to: 10 }], "2026-07-10"),
+    ).toBeNull();
   });
 });

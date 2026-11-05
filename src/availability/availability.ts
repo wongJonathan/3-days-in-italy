@@ -1,6 +1,10 @@
 import type { CleanPlace } from "../data/place.ts";
 import { weekdayOf, type IsoDate } from "../hours/calendar.ts";
-import { parseHours, type OpenRange, type VaguePhrase } from "../hours/parse.ts";
+import {
+  parseHours,
+  type OpenRange,
+  type VaguePhrase,
+} from "../hours/parse.ts";
 import { inSeason, seasonalHours, type SeasonalRule } from "./seasonal.ts";
 
 /** Whether a Place can be visited on one date, and how sure we are. */
@@ -28,8 +32,7 @@ export const availabilityOn = (
   if (!inSeason(rules, date)) return { kind: "closed", reason: "season" };
 
   const parsed = parseHours(seasonalHours(rules, date) ?? place.hours);
-  const hoursStatus =
-    place.hours_status === "assumed" ? "assumed" : "known";
+  const hoursStatus = place.hours_status === "assumed" ? "assumed" : "known";
 
   switch (parsed.kind) {
     case "weekly": {

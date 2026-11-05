@@ -102,7 +102,7 @@ const parseDays = (text: string): number[] | null => {
   if (from === undefined || to === undefined) return null;
 
   const days = [from];
-  for (let d = from; d !== to; ) {
+  for (let d = from; d !== to;) {
     d = (d + 1) % 7;
     days.push(d);
   }

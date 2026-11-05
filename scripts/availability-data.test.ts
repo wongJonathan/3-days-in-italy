@@ -7,13 +7,18 @@ import type { CleanPlace } from "../src/data/place.ts";
 import { parseHours } from "../src/hours/parse.ts";
 
 const places = JSON.parse(
-  readFileSync(new URL("../src/data/italy-clean.json", import.meta.url), "utf8"),
+  readFileSync(
+    new URL("../src/data/italy-clean.json", import.meta.url),
+    "utf8",
+  ),
 ) as CleanPlace[];
 
 describe("seasonal notes", () => {
   it("classifies every note in the dataset, with the exact current text", () => {
     const inData = Object.fromEntries(
-      places.filter((p) => p.seasonal_notes).map((p) => [p.id, p.seasonal_notes]),
+      places
+        .filter((p) => p.seasonal_notes)
+        .map((p) => [p.id, p.seasonal_notes]),
     );
     const classified = Object.fromEntries(
       Object.entries(seasonalNotes).map(([id, n]) => [id, n.note]),
@@ -27,7 +32,8 @@ describe("seasonal notes", () => {
       .flatMap((n) => n.rules)
       .flatMap((r) => (r.kind === "hours-in-months" ? [r.hours] : []));
     expect(overrides.length).toBeGreaterThan(0);
-    for (const hours of overrides) expect(parseHours(hours).kind).toBe("weekly");
+    for (const hours of overrides)
+      expect(parseHours(hours).kind).toBe("weekly");
   });
 
   it("uses valid month numbers", () => {
@@ -41,14 +47,22 @@ describe("seasonal notes", () => {
 
 describe("hours status", () => {
   it("gives every place an Hours Status", () => {
-    expect(places.every((p) => ["known", "assumed", "unknown"].includes(p.hours_status))).toBe(true);
+    expect(
+      places.every((p) =>
+        ["known", "assumed", "unknown"].includes(p.hours_status),
+      ),
+    ).toBe(true);
   });
 
   it("leaves no place with unknown hours", () => {
-    expect(places.filter((p) => p.hours_status === "unknown").map((p) => p.id)).toEqual([]);
+    expect(
+      places.filter((p) => p.hours_status === "unknown").map((p) => p.id),
+    ).toEqual([]);
   });
 
   it("gives every place a visit duration", () => {
-    expect(places.filter((p) => p.duration_minutes === null).map((p) => p.id)).toEqual([]);
+    expect(
+      places.filter((p) => p.duration_minutes === null).map((p) => p.id),
+    ).toEqual([]);
   });
 });
