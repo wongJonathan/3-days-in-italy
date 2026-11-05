@@ -50,6 +50,7 @@ export const DayView = ({
 
   return (
     <section className="day" aria-labelledby="day-title">
+      {/* Fixed at the top of the column; only .day__body below it scrolls. */}
       <header className="day__header">
         <h2 id="day-title">
           Day {index + 1} · {formatDate(day.date)}
@@ -125,118 +126,123 @@ export const DayView = ({
           </button>
         </div>
         <p className="field__hint">{regenerateHint(plan.stops)}</p>
-
-        {day.status === "finalized" && (
-          <p className="banner banner--ok">
-            ✓ Finalized. Changes reopen it for editing.
-          </p>
-        )}
-        {day.status === "editing" && day.saved && (
-          <p className="banner">
-            Finalized earlier. Your changes save when you finalize again.{" "}
-            <button
-              type="button"
-              className="button button--link"
-              onClick={() => dispatch({ type: "revert", day: index })}
-            >
-              Revert to saved
-            </button>
-          </p>
-        )}
-        {pinnedElsewhere && (
-          <p className="banner">
-            This day is now pinned to {day.dayArea}, but its Stops are in{" "}
-            {plan.baseCity}.{" "}
-            <button
-              type="button"
-              className="button button--link"
-              onClick={() => dispatch({ type: "regenerate", day: index })}
-            >
-              Regenerate day
-            </button>
-          </p>
-        )}
-        {unplanned.length > 0 && (
-          <p className="banner">
-            Must-Sees not planned yet:{" "}
-            {unplanned
-              .map((id) => {
-                const place = placesById.get(id);
-                return place ? `${place.name} (${baseCityOf(place)})` : id;
-              })
-              .join(", ")}
-            .
-          </p>
-        )}
       </header>
 
-      {plan.stops.length === 0 ? (
-        <div className="empty">
-          <p>No Stops yet.</p>
-          <p className="field__hint">
-            Press “Suggest this day”, or add places from the list.
-          </p>
+      {/* The scrolling part, like the Place list's results: banners, then Stops. */}
+      <div className="day__body">
+        <div className="day__banners">
+          {day.status === "finalized" && (
+            <p className="banner banner--ok">
+              ✓ Finalized. Changes reopen it for editing.
+            </p>
+          )}
+          {day.status === "editing" && day.saved && (
+            <p className="banner">
+              Finalized earlier. Your changes save when you finalize again.{" "}
+              <button
+                type="button"
+                className="button button--link"
+                onClick={() => dispatch({ type: "revert", day: index })}
+              >
+                Revert to saved
+              </button>
+            </p>
+          )}
+          {pinnedElsewhere && (
+            <p className="banner">
+              This day is now pinned to {day.dayArea}, but its Stops are in{" "}
+              {plan.baseCity}.{" "}
+              <button
+                type="button"
+                className="button button--link"
+                onClick={() => dispatch({ type: "regenerate", day: index })}
+              >
+                Regenerate day
+              </button>
+            </p>
+          )}
+          {unplanned.length > 0 && (
+            <p className="banner">
+              Must-Sees not planned yet:{" "}
+              {unplanned
+                .map((id) => {
+                  const place = placesById.get(id);
+                  return place ? `${place.name} (${baseCityOf(place)})` : id;
+                })
+                .join(", ")}
+              .
+            </p>
+          )}
         </div>
-      ) : (
-        <ol className="stops">
-          {schedule.stops.map((scheduled, i) => {
-            const place = placesById.get(scheduled.placeId)!;
-            const travelWarning = scheduled.warnings.find(
-              (w) => w.kind === "long-travel",
-            );
-            return (
-              <li key={scheduled.placeId}>
-                {scheduled.travel && (
-                  <p
-                    className={`connector${travelWarning ? " connector--warning" : ""}`}
-                  >
-                    {travelLabel(scheduled.travel)}
-                    {travelWarning && (
-                      <>
-                        {" "}
-                        <span aria-hidden="true">!</span>{" "}
-                        {warningText(travelWarning, {
-                          date: day.date,
-                          rules: rulesFor(place.id),
-                        })}
-                      </>
-                    )}
-                  </p>
-                )}
-                <StopCard
-                  number={i + 1}
-                  place={place}
-                  planned={plan.stops[i]}
-                  scheduled={scheduled}
-                  date={day.date}
-                  prefs={trip.prefs}
-                  isFirst={i === 0}
-                  isLast={i === schedule.stops.length - 1}
-                  onMoveUp={() =>
-                    dispatch({
-                      type: "moveStop",
-                      day: index,
-                      from: i,
-                      to: i - 1,
-                    })
-                  }
-                  onMoveDown={() =>
-                    dispatch({
-                      type: "moveStop",
-                      day: index,
-                      from: i,
-                      to: i + 1,
-                    })
-                  }
-                  onRemove={() =>
-                    dispatch({ type: "removeStop", day: index, index: i })
-                  }
-                />
-              </li>
-            );
-          })}
-        </ol>
-      )}
+
+        {plan.stops.length === 0 ? (
+          <div className="empty">
+            <p>No Stops yet.</p>
+            <p className="field__hint">
+              Press “Suggest this day”, or add places from the list.
+            </p>
+          </div>
+        ) : (
+          <ol className="stops">
+            {schedule.stops.map((scheduled, i) => {
+              const place = placesById.get(scheduled.placeId)!;
+              const travelWarning = scheduled.warnings.find(
+                (w) => w.kind === "long-travel",
+              );
+              return (
+                <li key={scheduled.placeId}>
+                  {scheduled.travel && (
+                    <p
+                      className={`connector${travelWarning ? " connector--warning" : ""}`}
+                    >
+                      {travelLabel(scheduled.travel)}
+                      {travelWarning && (
+                        <>
+                          {" "}
+                          <span aria-hidden="true">!</span>{" "}
+                          {warningText(travelWarning, {
+                            date: day.date,
+                            rules: rulesFor(place.id),
+                          })}
+                        </>
+                      )}
+                    </p>
+                  )}
+                  <StopCard
+                    number={i + 1}
+                    place={place}
+                    planned={plan.stops[i]}
+                    scheduled={scheduled}
+                    date={day.date}
+                    prefs={trip.prefs}
+                    isFirst={i === 0}
+                    isLast={i === schedule.stops.length - 1}
+                    onMoveUp={() =>
+                      dispatch({
+                        type: "moveStop",
+                        day: index,
+                        from: i,
+                        to: i - 1,
+                      })
+                    }
+                    onMoveDown={() =>
+                      dispatch({
+                        type: "moveStop",
+                        day: index,
+                        from: i,
+                        to: i + 1,
+                      })
+                    }
+                    onRemove={() =>
+                      dispatch({ type: "removeStop", day: index, index: i })
+                    }
+                  />
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </div>
     </section>
   );
 };

@@ -46,6 +46,8 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
   const total =
     list.groups.reduce((sum, g) => sum + g.rows.length, 0) +
     list.outside.length;
+  // No Budget: one "All places" group, whose heading sits outside the scroll.
+  const singleGroup = list.groups.length === 1 ? list.groups[0] : null;
 
   const add = (place: CleanPlace) => {
     dispatch({ type: "addPlace", day: dayIndex, placeId: place.id });
@@ -201,6 +203,13 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
         {announcement}
       </p>
 
+      {singleGroup && total > 0 && (
+        <h3 className="group__title place-list__heading">
+          {groupTitle(singleGroup.group, trip.prefs.budget)}{" "}
+          <span className="group__count">{singleGroup.rows.length}</span>
+        </h3>
+      )}
+
       {/* Only the results scroll; search and filters stay in view above them. */}
       <div className="place-list__results">
         {total === 0 ? (
@@ -257,6 +266,7 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
                     {emptyGroupText(group, trip.prefs.budget)}
                   </p>
                 );
+              if (singleGroup) return <div key={group}>{content}</div>;
               // "Other prices" starts collapsed, but is never hidden (design doc §3.7).
               return group === "other" ? (
                 <details key={group} className="group">

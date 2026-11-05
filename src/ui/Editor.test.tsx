@@ -121,3 +121,19 @@ describe("<Editor> places on other days", () => {
     );
   });
 });
+
+describe("<Editor> map", () => {
+  it("renders a placeholder outside the browser, so Leaflet never loads in Node", () => {
+    expect(render(trip)).toContain("Loading map…");
+  });
+});
+
+describe("<Editor> Place list heading", () => {
+  it("puts the single 'All places' heading above the scrolling results", () => {
+    const html = render(trip);
+    const heading = html.indexOf("All places");
+    const results = html.indexOf('class="place-list__results"');
+    expect(heading).toBeGreaterThan(-1);
+    expect(heading).toBeLessThan(results);
+  });
+});

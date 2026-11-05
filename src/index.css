@@ -300,7 +300,8 @@ input[type="date"],
 /*
  * Wide screens: the editor fills exactly one screen height, and each column
  * scrolls on its own, so the page itself never scrolls. In the Place list,
- * only the results scroll: search and filters stay in view.
+ * only the results scroll: search and filters stay in view. The day works the
+ * same way: its header ("Day 1" … "Replaces…") stays, the Stops scroll.
  * (Narrow screens stack the columns and scroll as one page; mobile tabs are 8f.)
  */
 @media (min-width: 1024px) {
@@ -310,11 +311,31 @@ input[type="date"],
     height: calc(100dvh - 32px); /* dvh: excludes mobile browser toolbars */
   }
 
-  .trip-panel,
-  .day {
+  .trip-panel {
     overflow-y: auto;
     min-height: 0; /* lets a grid item shrink, so it can scroll */
     padding-right: 4px; /* keeps the scrollbar off the content */
+  }
+
+  /* The day works like the Place list: the header stays, only the body scrolls. */
+  .day {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .day__header {
+    flex: none;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
   }
 
   .editor__side {
@@ -684,4 +705,77 @@ details.group > summary {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* ---------- Map (design doc §3.2) ---------- */
+
+.map {
+  height: 280px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Leaflet needs its container to have a height. */
+.map__canvas {
+  height: 100%;
+  width: 100%;
+}
+
+.map--placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--surface-alt);
+}
+
+@media (min-width: 1024px) {
+  /* In the side column: map on top (fixed share), the Place list fills the rest. */
+  .map {
+    flex: 0 0 38%;
+    height: auto;
+    min-height: 200px;
+  }
+}
+
+/* Numbered pins, matching the Stop badges */
+.map-pin {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font:
+    700 0.8125rem/1 system-ui,
+    sans-serif;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+  box-sizing: border-box;
+}
+
+/* A Stop with a Warning: amber ring, same number (shape + colour, not colour alone) */
+.map-pin--warning {
+  border-color: #a86f00;
+  box-shadow: 0 0 0 2px #a86f00;
+}
+
+/* No Budget: the single "All places" heading sits above the scrolling results. */
+.place-list__heading {
+  margin: 0 0 8px;
+}
+
+/*
+ * With a Budget there are several groups, so their headings stay inside the
+ * scroll, but each one pins to the top while you scroll through its group.
+ * (Sticky works here because each heading's parent is its own group.)
+ */
+.place-list__results .group__title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 4px 0;
+  background: var(--surface);
 }
