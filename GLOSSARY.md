@@ -36,7 +36,7 @@ A Place scheduled on a Trip Day, at a position in that day's order and with comp
 _Avoid_: Item, entry, activity
 
 **Warning**:
-A notice attached to a Stop when it breaks a rule: the Place is closed or out of season that day, the visit runs past closing time, or the Travel Time from the previous Stop is too long. A Warning never stops the traveler from keeping the Stop.
+A notice attached to a Stop when it breaks a rule: the Place is closed or out of season that day (or already closed when the traveler arrives), the visit runs past closing time, the Travel Time from the previous Stop is too long, or the day runs past its Day Window. A Warning never stops the traveler from keeping the Stop.
 _Avoid_: Error, conflict, block
 
 **Travel Time**:
