@@ -38,8 +38,15 @@ export type SchedulablePlace = Pick<
   | "duration_minutes"
 >;
 
-/** One Stop to schedule: the Place and its Seasonal Rules. */
-export type StopInput = { place: SchedulablePlace; rules: SeasonalRule[] };
+/**
+ * One Stop to schedule: the Place and its Seasonal Rules.
+ * `notBefore` holds the visit until a time of day (e.g. dinner from 19:00).
+ */
+export type StopInput = {
+  place: SchedulablePlace;
+  rules: SeasonalRule[];
+  notBefore?: number;
+};
 
 /** A broken planner rule. Warnings never stop the traveler from keeping a Stop. */
 export type Warning =
@@ -95,12 +102,12 @@ export const scheduleDay = ({
   let clock = window.start;
   let previous: SchedulablePlace | null = null;
 
-  for (const { place, rules } of stops) {
+  for (const { place, rules, notBefore } of stops) {
     const travel = previous ? travelTime(previous, place, mode) : null;
     const arrive = clock + (travel?.minutes ?? 0);
     const visitMinutes = place.duration_minutes ?? DEFAULT_VISIT_MINUTES;
     const availability = availabilityOn(place, rules, date);
-    const start = visitStart(availability, arrive);
+    const start = visitStart(availability, Math.max(arrive, notBefore ?? 0));
     const end = start + visitMinutes;
 
     scheduled.push({

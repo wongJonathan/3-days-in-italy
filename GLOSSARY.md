@@ -72,7 +72,7 @@ The traveler's target price level (€ to €€€€). A Place is **within bud
 _Avoid_: Price cap, spend
 
 **Pace**:
-How full each Trip Day is: Relaxed (about 3 Stops), Balanced (4–5) or Packed (6 or more).
+How full each Trip Day is, counted in sights: Relaxed (3), Balanced (4) or Packed (6). Meal Stops come on top.
 
 **Transport Mode**:
 How the traveler gets between distant Stops: Public Transport (the default) or Rental Car. Short hops inside a city are always on foot or by local transit.
@@ -81,6 +81,10 @@ _Avoid_: Travel mode, vehicle
 **Meal Stop**:
 A Stop at a restaurant or cafe, placed to cover lunch or dinner. The traveler chooses separately whether generation includes **lunch**, **dinner**, both, or neither.
 _Avoid_: Food stop
+
+**Base City**:
+One of the five cities a Trip Area is built from: Rome, Florence, Milan, Venice or Bologna. Every other town belongs to its nearest Base City (Siena to Florence, Como to Milan).
+_Avoid_: Hub, region
 
 **Trip Area**:
 The set of base cities the traveler picks for the whole Trip, with each city's nearby day-trip towns included. If they pick none, the generator chooses.

@@ -113,6 +113,41 @@ describe("scheduleDay", () => {
     });
   });
 
+  describe("notBefore (e.g. dinner from 19:00)", () => {
+    it("holds the visit until notBefore", () => {
+      const [first] = scheduleDay(
+        plan([{ ...stop(place("dinner")), notBefore: t("19:00") }]),
+      ).stops;
+      expect(first).toMatchObject({
+        arrive: t("9:00"),
+        start: t("19:00"),
+        warnings: [],
+      });
+    });
+
+    it("has no effect when you arrive later anyway", () => {
+      const day = scheduleDay(
+        plan([
+          stop(place("long", { duration_minutes: 11 * 60 })), // 9:00-20:00
+          { ...stop(place("dinner")), notBefore: t("19:00") },
+        ]),
+      );
+      expect(day.stops[1].start).toBe(t("20:00"));
+    });
+
+    it("still waits for opening time if the Place opens after notBefore", () => {
+      const [first] = scheduleDay(
+        plan([
+          {
+            ...stop(place("dinner", { hours: "19:30-23:00" })),
+            notBefore: t("19:00"),
+          },
+        ]),
+      ).stops;
+      expect(first.start).toBe(t("19:30"));
+    });
+  });
+
   describe("waiting for opening time", () => {
     it("starts the visit when the Place opens, if you arrive early", () => {
       const [first] = scheduleDay(
