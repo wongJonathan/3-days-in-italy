@@ -8,6 +8,6 @@ export default defineConfig({
   test: {
     // Core logic is plain TypeScript; tests run in Node (no browser DOM needed).
     environment: "node",
-    include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
+    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
   },
 });

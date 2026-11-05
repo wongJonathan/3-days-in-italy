@@ -32,3 +32,13 @@ export const INTEREST_TAGS: Record<
   "hidden-gem": { label: "Hidden Gem", tags: ["hidden-gem"] },
   "local-favorite": { label: "Local Favorite", tags: ["local-favorite"] },
 };
+
+/** Every chip in display order. Avoid Crowds is last: it changes how the others score. */
+export const INTERESTS: Interest[] = [
+  ...(Object.keys(INTEREST_TAGS) as Exclude<Interest, "avoid-crowds">[]),
+  "avoid-crowds",
+];
+
+/** The chip's label, e.g. "Hidden Gem" or "Avoid Crowds". */
+export const interestLabel = (interest: Interest): string =>
+  interest === "avoid-crowds" ? "Avoid Crowds" : INTEREST_TAGS[interest].label;
