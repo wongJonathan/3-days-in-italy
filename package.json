@@ -9,7 +9,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "data:clean": "node scripts/clean-data.ts"
   },
   "dependencies": {
     "react": "^19.3.1",
