@@ -17,3 +17,14 @@ export type Place = {
   seasonal_notes: string | null;
   booking_required: boolean | null;
 };
+
+/**
+ * How far a Place's hours can be trusted:
+ * - known:   from the dataset or a person's lookup (manual correction).
+ * - assumed: an `assumption` correction, or a vague phrase like "Evenings".
+ * - unknown: no hours at all, or a format the parser can't read.
+ */
+export type HoursStatus = "known" | "assumed" | "unknown";
+
+/** A Place as the app sees it, after the clean-data pipeline. */
+export type CleanPlace = Place & { hours_status: HoursStatus };

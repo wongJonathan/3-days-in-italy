@@ -32,8 +32,54 @@ describe('cleanPlaces', () => {
 
     const { places, review } = cleanPlaces(raw, [])
 
-    expect(places).toEqual(raw)
+    // The only addition is the derived hours_status.
+    expect(places).toEqual(raw.map((p) => ({ ...p, hours_status: 'known' })))
     expect(review).toEqual([])
+  })
+
+  describe('hours_status', () => {
+    const statusOf = (overrides: Partial<Place>, corrections: Correction[] = []) =>
+      cleanPlaces([place(overrides)], corrections).places[0].hours_status
+
+    it('is known when the raw hours parse', () => {
+      expect(statusOf({ hours: 'Mon-Sat 9:00-18:00' })).toBe('known')
+    })
+
+    it('is unknown when there are no hours', () => {
+      expect(statusOf({ hours: null })).toBe('unknown')
+    })
+
+    it('is unknown when the hours cannot be read', () => {
+      expect(statusOf({ hours: 'By appointment' })).toBe('unknown')
+    })
+
+    it('is assumed for a vague phrase like "Evenings"', () => {
+      expect(statusOf({ hours: 'Evenings' })).toBe('assumed')
+    })
+
+    it('is assumed when the hours come from an assumption correction', () => {
+      expect(
+        statusOf({ hours: null }, [
+          { placeId: 'place_001', field: 'hours', value: 'Daily 0:00-24:00', reason: 'Open square.', source: 'assumption' },
+        ]),
+      ).toBe('assumed')
+    })
+
+    it('is known when the hours come from a manual correction', () => {
+      expect(
+        statusOf({ hours: null }, [
+          { placeId: 'place_001', field: 'hours', value: 'Daily 9:00-22:00', reason: 'Looked up.', source: 'manual' },
+        ]),
+      ).toBe('known')
+    })
+
+    it('ignores a pending AI draft and judges the raw hours', () => {
+      expect(
+        statusOf({ hours: null }, [
+          { placeId: 'place_001', field: 'hours', value: 'Daily 9:00-22:00', reason: 'r', source: 'ai-draft' },
+        ]),
+      ).toBe('unknown')
+    })
   })
 
   it('never mutates the raw input', () => {

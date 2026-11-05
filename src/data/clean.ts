@@ -1,5 +1,6 @@
 import type { Correction, CorrectionSource, Removal } from "./corrections.ts";
-import type { Place } from "./place.ts";
+import { parseHours } from "../hours/parse.ts";
+import type { CleanPlace, HoursStatus, Place } from "./place.ts";
 
 /** One changed field, shown in the human review checklist. */
 export type ReviewRow = {
@@ -14,7 +15,7 @@ export type ReviewRow = {
 };
 
 export type CleanResult = {
-  places: Place[];
+  places: CleanPlace[];
   review: ReviewRow[];
 };
 
@@ -87,7 +88,33 @@ export const cleanPlaces = (
     (a, b) =>
       a.placeId.localeCompare(b.placeId) || a.field.localeCompare(b.field),
   );
-  return { places, review };
+  const assumedHours = new Set(
+    corrections
+      .filter((c) => c.field === "hours" && c.source === "assumption")
+      .map((c) => c.placeId),
+  );
+
+  return {
+    places: places.map((p) => ({
+      ...p,
+      hours_status: hoursStatusOf(p, assumedHours.has(p.id)),
+    })),
+    review,
+  };
+};
+
+/** See HoursStatus. Runs after corrections, so it judges the final hours value. */
+const hoursStatusOf = (place: Place, assumed: boolean): HoursStatus => {
+  if (assumed) return "assumed";
+  switch (parseHours(place.hours).kind) {
+    case "weekly":
+      return "known";
+    case "vague":
+      return "assumed";
+    case "missing":
+    case "unrecognized":
+      return "unknown";
+  }
 };
 
 /** `local_favorite` → `local-favorite`, lowercase, de-duplicated. Mutates the (cloned) place. */

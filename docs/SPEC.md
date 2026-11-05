@@ -69,7 +69,7 @@ Some tags aren't shown as chips, either because other parts of the planner alrea
   - the day runs past its Day Window.
 - **Hours Status.** Each Place's hours are labeled:
   - **Known**: from the data.
-  - **Assumed**: inferred from the kind of Place. Open squares are always accessible, outdoor activities run in daylight, and "Evenings" means 18:00–24:00.
+  - **Assumed**: inferred from the kind of Place. Open squares are always accessible, outdoor activities run in daylight, "Evenings" means 18:00–24:00, and "Morning only" means 08:00–12:00.
   - **Unknown**: no basis to say.
 - **Scoring.** A deterministic score adds up Interest matches and rating. Places rated under 4.0 are left out unless they are a Must-See. Each Stop shows "why it's here" chips that come straight from its score.
 - **Budget.** Budget is a target price level, not a filter. Lists group Places into *within budget*, *a little under*, *a little over*, and a collapsed *other prices*. The generator fills slots in that order.

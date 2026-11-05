@@ -20,7 +20,8 @@
       "cultural"
     ],
     "seasonal_notes": "Summer queues can be brutal — pre-book online always.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_002",
@@ -32,7 +33,7 @@
     "description": "Rome's most atmospheric quarter — cobblestones, ivy-covered walls, and the best evening energy in the city. Come at dusk and stay for dinner.",
     "latitude": 41.8893,
     "longitude": 12.4706,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 180,
     "price_range": "€",
     "rating": 4.7,
@@ -44,7 +45,8 @@
       "food"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_003",
@@ -67,7 +69,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_004",
@@ -90,7 +93,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_005",
@@ -113,7 +117,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_006",
@@ -125,7 +130,7 @@
     "description": "A lively morning market selling flowers, produce, and street food in one of Rome's most photogenic piazzas. By afternoon it clears out and becomes a bar scene. Go before 11am.",
     "latitude": 41.8955,
     "longitude": 12.4722,
-    "hours": "Morning only",
+    "hours": "Mon-Sat 7:00-14:00",
     "duration_minutes": 60,
     "price_range": "€",
     "rating": 4.2,
@@ -137,7 +142,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_007",
@@ -161,7 +167,8 @@
       "splurge"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_008",
@@ -173,7 +180,7 @@
     "description": "The grandest baroque square in Rome — Bernini's Fountain of the Four Rivers is its centerpiece. Touristy but beautiful, especially at night when it's lit up and the gelato places are still open.",
     "latitude": 41.8992,
     "longitude": 12.4731,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 45,
     "price_range": "€",
     "rating": 4.5,
@@ -185,7 +192,8 @@
       "scenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_009",
@@ -208,7 +216,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_010",
@@ -232,7 +241,8 @@
       "rainy-day"
     ],
     "seasonal_notes": "Closed Sundays except last Sunday of the month (free entry, massive crowds).",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_011",
@@ -255,7 +265,8 @@
       "iconic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_012",
@@ -277,7 +288,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_013",
@@ -289,7 +301,7 @@
     "description": "Rome's coolest neighborhood that tourists rarely reach — a working-class quarter that's become a hub for aperitivo bars, independent cinema, and young Roman life. Come Thursday or Friday evening.",
     "latitude": 41.8872,
     "longitude": 12.5342,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 120,
     "price_range": "€",
     "rating": 4.4,
@@ -300,7 +312,8 @@
       "food"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_014",
@@ -312,8 +325,8 @@
     "description": "One of Rome's great secrets — peer through the keyhole of the Knights of Malta and you'll see St. Peter's dome perfectly framed by a garden archway. Free, takes 5 minutes, and almost no one knows about it.",
     "latitude": 41.8833,
     "longitude": 12.478,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 15,
     "price_range": "€",
     "rating": 4.6,
     "tags": [
@@ -324,7 +337,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_015",
@@ -348,7 +362,8 @@
       "budget"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_016",
@@ -372,7 +387,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_017",
@@ -396,7 +412,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_018",
@@ -419,7 +436,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_019",
@@ -431,7 +449,7 @@
     "description": "Grand and photogenic but firmly in tourist-trap territory — the surrounding shops are luxury brands and prices on the nearby streets are inflated. Come for the view, not to linger.",
     "latitude": 41.9058,
     "longitude": 12.4823,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 20,
     "price_range": "€",
     "rating": 3.9,
@@ -442,7 +460,8 @@
       "views"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_020",
@@ -465,7 +484,8 @@
       "relaxing"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_021",
@@ -477,7 +497,7 @@
     "description": "Rent a bike and cycle the Via Appia Antica on a Sunday morning when the road is closed to cars — Roman aqueducts, ancient tombs, and countryside just 20 minutes from the city center. Genuinely surreal.",
     "latitude": 41.8547,
     "longitude": 12.5103,
-    "hours": null,
+    "hours": "Daily 9:30-17:00",
     "duration_minutes": 240,
     "price_range": "€€",
     "rating": 4.8,
@@ -490,7 +510,8 @@
       "scenic"
     ],
     "seasonal_notes": "Best April-October. Road closed to cars on Sundays only.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_022",
@@ -513,7 +534,8 @@
       "splurge"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_023",
@@ -525,8 +547,8 @@
     "description": "Walk up to the Pincian terrace above Piazza del Popolo at sunrise and you'll have the whole city spread before you in golden light, almost completely alone. One of Rome's great free experiences.",
     "latitude": 41.9108,
     "longitude": 12.4764,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 30,
     "price_range": "€",
     "rating": 4.6,
     "tags": [
@@ -538,7 +560,8 @@
       "free"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_024",
@@ -562,7 +585,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_025",
@@ -582,7 +606,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_026",
@@ -606,7 +631,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": "Booking essential April-October.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_027",
@@ -618,8 +644,8 @@
     "description": "The classic panoramic view of Florence — every travel photo of the Duomo and Arno is taken from here. Crowded at sunset; try instead at 7am when the city glows and tour buses haven't arrived.",
     "latitude": 43.7629,
     "longitude": 11.265,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 45,
     "price_range": "€",
     "rating": 4.6,
     "tags": [
@@ -631,7 +657,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_028",
@@ -643,7 +670,7 @@
     "description": "The 'other side of the Arno' — artisan workshops, excellent wine bars, and a far less touristy feel than the north bank. This is where Florentines actually spend their evenings.",
     "latitude": 43.7644,
     "longitude": 11.2469,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 180,
     "price_range": "€€",
     "rating": 4.7,
@@ -656,7 +683,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_029",
@@ -680,7 +708,8 @@
       "wine"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_030",
@@ -703,7 +732,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_031",
@@ -726,7 +756,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_032",
@@ -750,7 +781,8 @@
       "rainy-day"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_033",
@@ -773,7 +805,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_034",
@@ -798,7 +831,8 @@
       "family-friendly"
     ],
     "seasonal_notes": "Summer hours extend to 19:30. Can be brutally hot July-August.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_035",
@@ -810,7 +844,7 @@
     "description": "Take the train to Greve in Chianti and rent bikes to explore the vine-covered hills — castle ruins, olive groves, and the best young Chianti you can drink for almost nothing poured directly at the cantina. A perfect full day.",
     "latitude": 43.5833,
     "longitude": 11.3167,
-    "hours": null,
+    "hours": "Daily 9:00-17:00",
     "duration_minutes": 480,
     "price_range": "€€",
     "rating": 4.8,
@@ -823,7 +857,8 @@
       "splurge"
     ],
     "seasonal_notes": "Open April-October only. Best in September during harvest season.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "assumed"
   },
   {
     "id": "place_036",
@@ -846,7 +881,8 @@
       "iconic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_037",
@@ -858,7 +894,7 @@
     "description": "A tiny, slightly ramshackle bar in Oltrarno that does the best free aperitivo spread in Florence — show up at 7pm with €8 and walk out having eaten dinner. A genuinely local institution.",
     "latitude": 43.7655,
     "longitude": 11.2458,
-    "hours": "Evenings",
+    "hours": "Tue-Sun 19:30-02:00",
     "duration_minutes": 90,
     "price_range": "€",
     "rating": 4.5,
@@ -870,7 +906,8 @@
       "budget"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "assumed"
   },
   {
     "id": "place_038",
@@ -882,7 +919,7 @@
     "description": "Florence to Siena is 90 minutes by bus — and Siena's medieval city center, the Piazza del Campo, and its cathedral are reason enough to go. Smaller, less crowded, and a different flavor of Tuscany entirely.",
     "latitude": 43.3186,
     "longitude": 11.3307,
-    "hours": null,
+    "hours": "Daily 8:00-19:00",
     "duration_minutes": 360,
     "price_range": "€€",
     "rating": 4.7,
@@ -894,7 +931,8 @@
       "family-friendly"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_039",
@@ -918,7 +956,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_040",
@@ -943,7 +982,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_041",
@@ -967,7 +1007,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_042",
@@ -989,7 +1030,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_043",
@@ -1012,7 +1054,8 @@
       "romantic"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_044",
@@ -1024,7 +1067,7 @@
     "description": "Visit a small family producer — the Acetaia Malpighi or Acetaia Giusti are both excellent — to taste real Aceto Balsamico Tradizionale aged 12-25 years. What you buy in supermarkets is not this.",
     "latitude": 44.6469,
     "longitude": 10.9257,
-    "hours": null,
+    "hours": "Daily 9:30-17:30",
     "duration_minutes": 90,
     "price_range": "€€",
     "rating": 4.8,
@@ -1036,7 +1079,8 @@
       "experience"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "assumed"
   },
   {
     "id": "place_045",
@@ -1059,7 +1103,8 @@
       "active"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_046",
@@ -1084,7 +1129,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_047",
@@ -1107,7 +1153,8 @@
       "cultural"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_048",
@@ -1131,7 +1178,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_049",
@@ -1143,7 +1191,7 @@
     "description": "Bologna has 40km of covered porticoes — a UNESCO World Heritage Site — and you can walk for hours without getting rained on. The route from Piazza Maggiore to San Luca Sanctuary is the classic, and spectacular.",
     "latitude": 44.4949,
     "longitude": 11.3426,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 120,
     "price_range": "€",
     "rating": 4.6,
@@ -1155,7 +1203,8 @@
       "active"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_050",
@@ -1179,7 +1228,8 @@
       "relaxing"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_051",
@@ -1203,7 +1253,8 @@
       "quiet"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_052",
@@ -1215,8 +1266,8 @@
     "description": "Bologna's main square — the 14th-century Basilica of San Petronio, the Neptune fountain, the grand Palazzo d'Accursio — and at night with students filling the piazza and cafes spilling out, it's magnetic.",
     "latitude": 44.4938,
     "longitude": 11.3427,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 45,
     "price_range": "€",
     "rating": 4.7,
     "tags": [
@@ -1227,7 +1278,8 @@
       "views"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_053",
@@ -1239,7 +1291,7 @@
     "description": "Day trip from Bologna (35 min by train) to the home of Parmigiano-Reggiano and Prosciutto di Parma — guided tours of the actual production facilities are easy to arrange and utterly fascinating. Then eat at an osteria after.",
     "latitude": 44.8015,
     "longitude": 10.3279,
-    "hours": null,
+    "hours": "Mon-Fri 8:30-14:30",
     "duration_minutes": 360,
     "price_range": "€€",
     "rating": 4.7,
@@ -1251,7 +1303,8 @@
       "outdoors"
     ],
     "seasonal_notes": "Tours run weekday mornings only — plan ahead.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "assumed"
   },
   {
     "id": "place_054",
@@ -1273,7 +1326,8 @@
       "budget"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_055",
@@ -1297,7 +1351,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_056",
@@ -1320,7 +1375,8 @@
       "historic"
     ],
     "seasonal_notes": "Tickets frequently sell out 2 months in advance.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_057",
@@ -1332,7 +1388,7 @@
     "description": "Milan's canal district — the aperitivo culture here is world-class, and on warm evenings the canal-side bars are genuinely magical. Order a Campari Spritz, let the free food happen, and don't rush.",
     "latitude": 45.4538,
     "longitude": 9.173,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 120,
     "price_range": "€€",
     "rating": 4.6,
@@ -1344,7 +1400,8 @@
       "romantic"
     ],
     "seasonal_notes": "Best May-September when canal-side seating is open.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_058",
@@ -1367,7 +1424,8 @@
       "quiet"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_059",
@@ -1390,7 +1448,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": "Third weekend of each month only.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_060",
@@ -1402,7 +1461,7 @@
     "description": "Italy's oldest and most beautiful shopping mall — a 19th-century iron-and-glass arcade connecting the Duomo to La Scala. Even if you're not buying, come for the architecture and the absurdly expensive Campari at the historic Camparino bar.",
     "latitude": 45.466,
     "longitude": 9.1899,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 45,
     "price_range": "€€€",
     "rating": 4.6,
@@ -1414,7 +1473,8 @@
       "scenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_061",
@@ -1437,7 +1497,8 @@
       "iconic"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_062",
@@ -1460,7 +1521,8 @@
       "modern"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_063",
@@ -1472,7 +1534,7 @@
     "description": "The jewel of Lake Como — terraced gardens, silk shops, lake-view restaurants, and a ferry crossing that gives you one of the most beautiful panoramas in Europe. The ferry from Como takes 2 hours; the hydrofoil is 45 minutes.",
     "latitude": 45.9854,
     "longitude": 9.2593,
-    "hours": null,
+    "hours": "Daily 8:00-19:00",
     "duration_minutes": 360,
     "price_range": "€€€",
     "rating": 4.8,
@@ -1484,7 +1546,8 @@
       "views"
     ],
     "seasonal_notes": "Ferries run less often in winter. Summer weekends extremely crowded.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_064",
@@ -1509,7 +1572,8 @@
       "views"
     ],
     "seasonal_notes": "Open April-October only.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_065",
@@ -1534,7 +1598,8 @@
       "romantic"
     ],
     "seasonal_notes": "Rooftop open May-September only.",
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_066",
@@ -1546,8 +1611,8 @@
     "description": "Venice's most famous bridge — a 16th-century marble arch over the Grand Canal that's still functioning and still stunning. Go at 7am to have it almost to yourself; by 10am it's a wall of selfie sticks.",
     "latitude": 45.438,
     "longitude": 12.3359,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 20,
     "price_range": "€",
     "rating": 4.7,
     "tags": [
@@ -1559,7 +1624,8 @@
       "historic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_067",
@@ -1583,7 +1649,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_068",
@@ -1595,7 +1662,7 @@
     "description": "The traditional way Venetians eat — moving from bar to bar (bacaro) eating small snacks (cicchetti) with glasses of prosecco or spritz. Cannaregio is the most authentic neighborhood for it, away from the San Marco crowds.",
     "latitude": 45.4467,
     "longitude": 12.3267,
-    "hours": "Evenings",
+    "hours": "Daily 18:00-22:30",
     "duration_minutes": 180,
     "price_range": "€",
     "rating": 4.8,
@@ -1608,7 +1675,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_069",
@@ -1632,7 +1700,8 @@
       "iconic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_070",
@@ -1644,7 +1713,7 @@
     "description": "Take the vaporetto 45 minutes into the lagoon to the island of brightly painted houses — one of the most photogenic places in Italy, genuinely quiet on weekday mornings, and worth it for the seafood lunch alone.",
     "latitude": 45.4852,
     "longitude": 12.4175,
-    "hours": null,
+    "hours": "Daily 8:00-19:00",
     "duration_minutes": 300,
     "price_range": "€€",
     "rating": 4.7,
@@ -1656,7 +1725,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_071",
@@ -1668,7 +1738,7 @@
     "description": "The official gondola rides are expensive and heavily trafficked on the Grand Canal — but if you book one that starts in a back canal through Cannaregio or Dorsoduro, you get the Venice that existed before mass tourism. Split the cost four ways.",
     "latitude": 45.4408,
     "longitude": 12.3155,
-    "hours": null,
+    "hours": "Daily 9:00-19:00",
     "duration_minutes": 60,
     "price_range": "€€€",
     "rating": 4.4,
@@ -1680,7 +1750,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "assumed"
   },
   {
     "id": "place_072",
@@ -1692,7 +1763,7 @@
     "description": "Venice's most livable neighborhood — the Ca' Rezzonico, the Zattere promenade, the Accademia, and a series of campo squares where students and locals outnumber tourists. Especially lovely at dusk.",
     "latitude": 45.4324,
     "longitude": 12.3259,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 180,
     "price_range": "€€",
     "rating": 4.6,
@@ -1704,7 +1775,8 @@
       "evening"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_073",
@@ -1727,7 +1799,8 @@
       "scenic"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_074",
@@ -1751,7 +1824,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_075",
@@ -1763,7 +1837,7 @@
     "description": "Before 8am, Venice belongs to its residents — delivery boats, market vendors setting up, locals walking to work. Cannaregio is the largest residential neighborhood and the best place to experience this other Venice.",
     "latitude": 45.4454,
     "longitude": 12.3289,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 90,
     "price_range": "€",
     "rating": 4.7,
@@ -1775,7 +1849,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_076",
@@ -1798,7 +1873,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_077",
@@ -1810,8 +1886,8 @@
     "description": "The fountain lit at night is a completely different experience from the daytime chaos — walk here after a late dinner when the tourist buses have gone and the marble glows. Bring a coin.",
     "latitude": 41.9009,
     "longitude": 12.4833,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 9:00-22:00",
+    "duration_minutes": 30,
     "price_range": "€",
     "rating": 4.6,
     "tags": [
@@ -1822,7 +1898,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_078",
@@ -1845,7 +1922,8 @@
       "quiet"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_080",
@@ -1857,7 +1935,7 @@
     "description": "Rome's most beautiful park — 80 hectares of gardens, lakes, and tree-lined paths connecting the Borghese Gallery to views over the city. Rent a rowboat on the lake or just wander.",
     "latitude": 41.9135,
     "longitude": 12.4924,
-    "hours": null,
+    "hours": "Daily 8:00-19:00",
     "duration_minutes": 120,
     "price_range": "€",
     "rating": 4.5,
@@ -1869,7 +1947,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_081",
@@ -1892,7 +1971,8 @@
       "rainy-day"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_082",
@@ -1914,7 +1994,8 @@
       "family-friendly"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_083",
@@ -1937,7 +2018,8 @@
       "experience"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_084",
@@ -1949,7 +2031,7 @@
     "description": "The only Florentine bridge that survived WWII — lined with jewelers on a structure built in 1345. The view from the Arno banks is better than the view on it. Cross it, then watch it from the adjacent Ponte Santa Trinità.",
     "latitude": 43.768,
     "longitude": 11.2531,
-    "hours": null,
+    "hours": "Daily 0:00-24:00",
     "duration_minutes": 30,
     "price_range": "€",
     "rating": 4.5,
@@ -1960,7 +2042,8 @@
       "tourist-heavy"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_085",
@@ -1972,8 +2055,8 @@
     "description": "The town of Como itself — often overlooked in favor of Bellagio — has a medieval center, a beautiful cathedral, and a lakefront promenade that's utterly lovely on a quiet morning. Easier to reach from Milan (45 min by train).",
     "latitude": 45.8085,
     "longitude": 9.0852,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 60,
     "price_range": "€",
     "rating": 4.4,
     "tags": [
@@ -1983,8 +2066,9 @@
       "morning",
       "outdoors"
     ],
-    "seasonal_notes": "Open April-October only.",
-    "booking_required": false
+    "seasonal_notes": "Best April-October.",
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_086",
@@ -2008,7 +2092,8 @@
       "modern"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_087",
@@ -2031,7 +2116,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_088",
@@ -2055,7 +2141,8 @@
       "morning"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_089",
@@ -2067,7 +2154,7 @@
     "description": "A tiny Renaissance hill town 90 minutes from Florence or Siena — the entire town center is a UNESCO site, the Pecorino cheese from the valley below is exceptional, and the view over the Val d'Orcia on a clear day is the most Tuscan thing that exists.",
     "latitude": 43.0778,
     "longitude": 11.6793,
-    "hours": null,
+    "hours": "Daily 8:00-19:00",
     "duration_minutes": 360,
     "price_range": "€",
     "rating": 4.7,
@@ -2080,7 +2167,8 @@
       "romantic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_090",
@@ -2092,7 +2180,7 @@
     "description": "30 minutes from Verona — if you're in the Veneto in October, this is the annual risotto festival in the heart of Vialone Nano rice country. Hundreds of vendors, chefs competing, and the best risotto all'Amarone you'll ever eat.",
     "latitude": 45.2661,
     "longitude": 11.0008,
-    "hours": null,
+    "hours": "Mon-Thu 11:30-14:30, 18:30-24:00, Fri 11:30-14:30, 18:30-01:00, Sat 11:00-15:00, 18:00-01:00, Sun 10:00-15:00, 18:00-23:00",
     "duration_minutes": 300,
     "price_range": "€€",
     "rating": 4.6,
@@ -2104,7 +2192,8 @@
       "experience"
     ],
     "seasonal_notes": "October only — check exact festival dates before planning.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_091",
@@ -2128,7 +2217,8 @@
       "experience"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_092",
@@ -2151,7 +2241,8 @@
       "wine"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_093",
@@ -2163,8 +2254,8 @@
     "description": "Stand in the piazza and look up at Brunelleschi's dome — even if you don't go inside, just being here and understanding that someone built this in 1436 without power tools is staggering. The marble facade of the Baptistery is also extraordinary.",
     "latitude": 43.7731,
     "longitude": 11.2561,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 30,
     "price_range": "€",
     "rating": 4.8,
     "tags": [
@@ -2175,7 +2266,8 @@
       "free"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_094",
@@ -2198,7 +2290,8 @@
       "photogenic"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_095",
@@ -2222,7 +2315,8 @@
       "morning"
     ],
     "seasonal_notes": "Best April-October.",
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_096",
@@ -2246,7 +2340,8 @@
       "scenic"
     ],
     "seasonal_notes": null,
-    "booking_required": true
+    "booking_required": true,
+    "hours_status": "known"
   },
   {
     "id": "place_097",
@@ -2258,8 +2353,8 @@
     "description": "A long promenade along the Janiculum hill — arguably the best panoramic views over Rome, and quiet enough that you can hear a noon cannon fired every day. Walk here from Trastevere uphill through the botanical gardens.",
     "latitude": 41.8939,
     "longitude": 12.4634,
-    "hours": null,
-    "duration_minutes": null,
+    "hours": "Daily 0:00-24:00",
+    "duration_minutes": 60,
     "price_range": "€",
     "rating": 4.6,
     "tags": [
@@ -2271,7 +2366,8 @@
       "local-favorite"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_098",
@@ -2295,7 +2391,8 @@
       "art"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_099",
@@ -2317,7 +2414,8 @@
       "market"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_100",
@@ -2329,7 +2427,7 @@
     "description": "The Isola and Porta Ticinese neighborhoods have Milan's best independent aperitivo bar scene — start at one end of Corso Como and work your way south through Navigli over 3 hours. Order the Negroni, eat everything, repeat.",
     "latitude": 45.4791,
     "longitude": 9.1875,
-    "hours": "Evenings",
+    "hours": "Daily 18:00-23:00",
     "duration_minutes": 180,
     "price_range": "€€",
     "rating": 4.7,
@@ -2342,7 +2440,8 @@
       "active"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_101",
@@ -2367,7 +2466,8 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   },
   {
     "id": "place_102",
@@ -2379,7 +2479,7 @@
     "description": "The fashion district — Via Montenapoleone, Via della Spiga, and the surrounding streets are where every major luxury house has its flagship. Even if you're not buying, the windows are worth it and the architecture is stunning.",
     "latitude": 45.4695,
     "longitude": 9.1991,
-    "hours": null,
+    "hours": "Daily 10:00-19:00",
     "duration_minutes": 90,
     "price_range": "€€€€",
     "rating": 4.3,
@@ -2390,7 +2490,8 @@
       "splurge"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "assumed"
   },
   {
     "id": "place_103",
@@ -2414,6 +2515,7 @@
       "hidden-gem"
     ],
     "seasonal_notes": null,
-    "booking_required": false
+    "booking_required": false,
+    "hours_status": "known"
   }
 ]

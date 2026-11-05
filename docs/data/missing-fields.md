@@ -1,6 +1,6 @@
 # Places with Missing or Vague Data
 
-This is a working list of the gaps in `italy.json` and our estimate for each one. Estimates come from the research section below. Hours use the same format as the dataset, and "Daily 0:00-24:00" means always open. Only confirmed values (marked ✅) are applied to `italy-clean.json` so far. The rest become `assumption` corrections when the Hours Status logic is built (build step 3).
+This is a working list of the gaps in `italy.json` and our estimate for each one. Estimates come from the research section below. Hours use the same format as the dataset, and "Daily 0:00-24:00" means always open. All estimates are applied to `italy-clean.json` (step 3). Confirmed values (✅) are `manual` corrections, with Hours Status *known*. The rest are `assumption` corrections, with Hours Status *assumed*.
 
 Source: `italy.json` as of 2026-11-04. 38 Places have missing or vague hours. 9 Places have no duration, and all 9 also lack hours.
 
@@ -67,7 +67,7 @@ These are the only Places where an external lookup could return real opening hou
 | place_068 | Cicchetti Bar Crawl, Cannaregio | experience | Venice | 180 | Evenings | Daily 18:00-22:30 (typical bacaro evening hours) |
 | place_071 | Gondola on a Back Canal | experience | Venice | 60 | — | Daily 9:00-19:00 (official daytime rate) |
 | place_079 | Prosciutto e Melone at Cremeria Mascareta | cafe | Venice | 90 | Evenings | ❌ removed from dataset |
-| place_090 | Isola della Scala Risotto Festival | experience | Isola della Scala | 300 | — | Unknown: 17 Sep–13 Oct 2026, daily hours not published |
+| place_090 | Isola della Scala Risotto Festival | experience | Isola della Scala | 300 | — | Mon-Thu 11:30-14:30, 18:30-24:00, Fri 11:30-14:30, 18:30-01:00, Sat 11:00-15:00, 18:00-01:00, Sun 10:00-15:00, 18:00-23:00 ✅ confirmed, applied |
 
 ## Missing duration (9 Places, all open spaces from group A)
 
@@ -153,5 +153,5 @@ These go beyond missing hours. Status as of 2026-11-05:
 1. ✅ **Removed.** **place_079:** the name ("Cremeria", "Prosciutto e Melone") doesn't match the description, which is Enoteca Mascareta, a wine bar.
 2. ✅ **`booking_required` corrected to true.** **place_037:** the real Rasputin needs a reservation and is a cocktail speakeasy, so `booking_required: false` and `€` are doubtful.
 3. ✅ **Hours corrected to Daily 9:00-22:00. The price stays €.** **place_018 / 077 Trevi:** the €2 basin ticket since Feb 2026 isn't in the data. It's walk-up, so `booking_required: false` still holds.
-4. ✅ **Seasonal note corrected.** **place_063 Bellagio:** the seasonal note says "Open April–October only". The town is open all year; only the ferry service shrinks in winter.
+4. ✅ **Seasonal note corrected** (place_085 Como Town Lakefront too: "Open April–October only" → "Best April–October"). **place_063 Bellagio:** the seasonal note says "Open April–October only". The town is open all year; only the ferry service shrinks in winter.
 5. Kept as-is (your decision). **place_090:** the seasonal note says "October only", but the 2026 festival starts 17 September.
