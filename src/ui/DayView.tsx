@@ -174,8 +174,7 @@ export const DayView = ({
         <div className="empty">
           <p>No Stops yet.</p>
           <p className="field__hint">
-            Press “Suggest this day”, or add Places from the list (coming in the
-            next step).
+            Press “Suggest this day”, or add places from the list.
           </p>
         </div>
       ) : (

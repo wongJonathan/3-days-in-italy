@@ -3,6 +3,7 @@ import type { CleanPlace } from "../data/place.ts";
 import { scheduleStops } from "../generator/generate-day.ts";
 import { unplannedMustSees, type Trip, type TripAction } from "../trip/trip.ts";
 import { DayView } from "./DayView.tsx";
+import { PlaceList } from "./PlaceList.tsx";
 import { TripPanel } from "./TripPanel.tsx";
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 };
 
 /**
- * The editor: Trip panel | open day | (map and Place list arrive in 8d–8e).
+ * The editor: Trip panel | open day | Place list (the map arrives in 8e).
  * Schedules are recomputed from the Trip on every render. The scheduler is
  * pure and fast, so there is no stored copy of times that could go stale.
  */
@@ -49,10 +50,8 @@ export const Editor = ({ trip, places, dispatch, onReset }: Props) => {
         unplanned={unplannedMustSees(trip)}
         dispatch={dispatch}
       />
-      <aside className="editor__side" aria-label="Map and places">
-        <p className="field__hint">
-          The map and the Place list arrive in the next steps.
-        </p>
+      <aside className="editor__side" aria-label="Places">
+        <PlaceList trip={trip} places={places} dispatch={dispatch} />
       </aside>
     </div>
   );

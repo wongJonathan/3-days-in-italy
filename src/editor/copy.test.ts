@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { PlannedStop } from "../generator/generate-day.ts";
 import {
+  emptyGroupText,
   formatDuration,
+  groupTitle,
   hoursLabel,
   reasonLabel,
   regenerateHint,
@@ -224,5 +226,26 @@ describe("regenerateHint", () => {
 
   it("offers to suggest a day when there is nothing to replace", () => {
     expect(regenerateHint([])).toBe("Suggests Stops for this day.");
+  });
+});
+
+describe("groupTitle / emptyGroupText", () => {
+  it("names each budget group around the target", () => {
+    expect(groupTitle("within", "€€")).toBe("Around €€ · your budget");
+    expect(groupTitle("a-little-under", "€€")).toBe("A little under · €");
+    expect(groupTitle("a-little-over", "€€")).toBe("A little over · €€€");
+    expect(groupTitle("other", "€€")).toBe("Other prices");
+    expect(groupTitle("all", null)).toBe("All places");
+  });
+
+  it("explains empty groups at the ends of the scale", () => {
+    expect(groupTitle("a-little-under", "€")).toBe("A little under");
+    expect(emptyGroupText("a-little-under", "€")).toBe(
+      "Nothing is cheaper than €.",
+    );
+    expect(emptyGroupText("a-little-over", "€€€€")).toBe(
+      "Nothing costs more than €€€€.",
+    );
+    expect(emptyGroupText("within", "€€")).toBe("None match right now.");
   });
 });

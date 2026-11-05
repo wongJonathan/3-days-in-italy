@@ -287,7 +287,7 @@ input[type="date"],
   color: var(--muted);
 }
 
-/* ---------- Editor: Trip panel | day | side (map + list in 8d–8e) ---------- */
+/* ---------- Editor: Trip panel | day | Place list ---------- */
 
 .editor {
   display: grid;
@@ -297,15 +297,59 @@ input[type="date"],
   margin: 0 auto;
 }
 
+/*
+ * Wide screens: the editor fills exactly one screen height, and each column
+ * scrolls on its own, so the page itself never scrolls. In the Place list,
+ * only the results scroll: search and filters stay in view.
+ * (Narrow screens stack the columns and scroll as one page; mobile tabs are 8f.)
+ */
+@media (min-width: 1024px) {
+  .editor {
+    grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1fr);
+    height: calc(100vh - 32px); /* 32px = body padding, top + bottom */
+    height: calc(100dvh - 32px); /* dvh: excludes mobile browser toolbars */
+  }
+
+  .trip-panel,
+  .day {
+    overflow-y: auto;
+    min-height: 0; /* lets a grid item shrink, so it can scroll */
+    padding-right: 4px; /* keeps the scrollbar off the content */
+  }
+
+  .editor__side {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .place-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .place-list__results {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+}
+
 @media (min-width: 1200px) {
   .editor {
     grid-template-columns: 240px minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
   }
-  .trip-panel {
-    position: sticky;
-    top: 16px;
-  }
+}
+
+/* "Already planned for Day 2": worth noticing, but not a rule break */
+.tag--warning {
+  border-color: var(--warning-text);
+  color: var(--warning-text);
+  background: var(--warning-bg);
 }
 
 .trip-panel__title {
@@ -526,4 +570,118 @@ input[type="date"],
 .button--small {
   min-height: 36px;
   padding: 4px 12px;
+}
+
+/* ---------- Place list (design doc §3.7) ---------- */
+
+.place-list__title {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+}
+
+.place-list__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.control--wide {
+  flex: 1 1 200px;
+}
+
+.control input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.place-list__interests {
+  margin-bottom: 16px;
+}
+
+.group {
+  margin-bottom: 16px;
+}
+
+.group__title {
+  margin: 0 0 8px;
+  font-size: 0.9375rem;
+  cursor: default;
+}
+
+details.group > summary {
+  cursor: pointer;
+}
+
+.group__count {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.place-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.place-row {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Closed today: dimmed, but still listed and still addable (design doc §3.7) */
+.place-row--closed {
+  background: var(--surface-alt);
+}
+
+.place-row__main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.place-row__name {
+  font-weight: 600;
+}
+
+.place-row__meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.place-row__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.place-row__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.button--on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Read by screen readers, not shown */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }

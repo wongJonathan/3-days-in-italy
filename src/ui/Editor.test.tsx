@@ -63,3 +63,61 @@ describe("<Editor>", () => {
     expect(render(sunday)).toContain("Closed on Sundays.");
   });
 });
+
+describe("<Editor> Place list", () => {
+  const html = render(trip);
+
+  it("shows the Place list with its filters", () => {
+    expect(html).toContain("Add places");
+    expect(html).toContain("Search all places");
+    expect(html).toContain("All of Italy");
+    expect(html).toContain("Open Fri 6 Nov");
+  });
+
+  it("groups by price, with one group when no Budget is set", () => {
+    expect(html).toContain("All places");
+    expect(html).toMatch(/\+ Add/);
+    // Day 1 Stops are in the schedule, so the list does not repeat them.
+    expect(html).not.toContain("On this day");
+  });
+
+  it("shows the four budget groups when a Budget is set", () => {
+    const withBudget = render({
+      ...trip,
+      prefs: { ...trip.prefs, budget: "€€" },
+    });
+    expect(withBudget).toContain("Around €€ · your budget");
+    expect(withBudget).toContain("A little under · €");
+    expect(withBudget).toContain("A little over · €€€");
+    expect(withBudget).toContain("Other prices");
+  });
+
+  it("marks Must-Sees as pressed", () => {
+    // Hard Rock Cafe Rome: a Must-See that is not on Day 1, so it is in the list.
+    const starred = render({
+      ...trip,
+      prefs: { ...trip.prefs, mustSees: [...trip.prefs.mustSees, "place_025"] },
+    });
+    expect(starred).toContain(
+      'aria-pressed="true" aria-label="Must-See: Hard Rock Cafe Rome"',
+    );
+  });
+
+  it("hides Places already on the open day", () => {
+    // The Vatican is a Must-See planned on Day 1: in the schedule, not the list.
+    expect(html).not.toContain('aria-label="Must-See: Vatican Museums"');
+  });
+});
+
+describe("<Editor> places on other days", () => {
+  it("notes when a listed place is already planned for another day", () => {
+    const reduce = tripReducer(PLACES);
+    const backOnDay1 = [
+      { type: "openDay", day: 1 } as const,
+      { type: "openDay", day: 0 } as const,
+    ].reduce(reduce, trip);
+    expect(render(backOnDay1)).toContain(
+      "Already planned for Day 2 (Sat 7 Nov)",
+    );
+  });
+});

@@ -7,6 +7,7 @@ import { parseHours } from "../hours/parse.ts";
 import { interestLabel } from "../preferences/interests.ts";
 import { formatMonth, formatTime, formatWeekday } from "../ui/format.ts";
 import type { Warning } from "../schedule/schedule.ts";
+import type { BudgetGroup, PriceLevel } from "../scoring/budget.ts";
 import type { Reason } from "../scoring/score.ts";
 import type { TravelTime } from "../travel/travel-time.ts";
 
@@ -132,4 +133,37 @@ export const regenerateHint = (stops: PlannedStop[]): string => {
   const kept = stops.length - replaced;
   if (replaced === 0 && kept === 0) return "Suggests Stops for this day.";
   return `Replaces ${replaced} suggested Stop${replaced === 1 ? "" : "s"}, keeps ${kept}.`;
+};
+
+/** One € fewer or more than `budget`, or null past the end of the scale. */
+const neighbourLevel = (budget: PriceLevel, step: -1 | 1): string | null => {
+  const length = budget.length + step;
+  return length >= 1 && length <= 4 ? "€".repeat(length) : null;
+};
+
+/** A Place list group header (design doc §3.7): "Around €€ · your budget". */
+export const groupTitle = (
+  group: BudgetGroup | "all",
+  budget: PriceLevel | null,
+): string => {
+  if (group === "all" || budget === null) return "All places";
+  if (group === "within") return `Around ${budget} · your budget`;
+  if (group === "other") return "Other prices";
+  const level = neighbourLevel(budget, group === "a-little-under" ? -1 : 1);
+  const name = group === "a-little-under" ? "A little under" : "A little over";
+  return level ? `${name} · ${level}` : name;
+};
+
+/** Shown in an empty group, so the traveler knows it exists but has nothing. */
+export const emptyGroupText = (
+  group: BudgetGroup | "all",
+  budget: PriceLevel | null,
+): string => {
+  if (budget && group === "a-little-under" && !neighbourLevel(budget, -1)) {
+    return `Nothing is cheaper than ${budget}.`;
+  }
+  if (budget && group === "a-little-over" && !neighbourLevel(budget, 1)) {
+    return `Nothing costs more than ${budget}.`;
+  }
+  return "None match right now.";
 };
