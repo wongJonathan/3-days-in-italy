@@ -6,6 +6,7 @@ import { cleanPlaces } from '../src/data/clean.ts'
 import { corrections, removals } from '../src/data/corrections.ts'
 import type { Place } from '../src/data/place.ts'
 import { renderReview } from '../src/data/review.ts'
+import { parseHours } from '../src/hours/parse.ts'
 
 const root = new URL('../', import.meta.url)
 const read = (path: string) => readFileSync(new URL(path, root), 'utf8')
@@ -30,6 +31,13 @@ describe('cleaning the real dataset', () => {
   it('leaves no underscore-spelled tags behind', () => {
     const allTags = places.flatMap((p) => p.tags)
     expect(allTags.filter((t) => t.includes('_'))).toEqual([])
+  })
+
+  it('recognizes every hours format (add it to parseHours, or correct the value, if this fails)', () => {
+    const unrecognized = places
+      .map((p) => ({ id: p.id, parsed: parseHours(p.hours) }))
+      .filter(({ parsed }) => parsed.kind === 'unrecognized')
+    expect(unrecognized).toEqual([])
   })
 
   it('matches the committed italy-clean.json (run `npm run data:clean` if this fails)', () => {
