@@ -32,16 +32,21 @@ describe("seasonal notes", () => {
       .flatMap((n) => n.rules)
       .flatMap((r) => (r.kind === "hours-in-months" ? [r.hours] : []));
     expect(overrides.length).toBeGreaterThan(0);
-    for (const hours of overrides)
+    overrides.forEach((hours) => {
       expect(parseHours(hours).kind).toBe("weekly");
+    });
   });
 
   it("uses valid month numbers", () => {
-    for (const rule of Object.values(seasonalNotes).flatMap((n) => n.rules)) {
-      if (rule.kind === "months" || rule.kind === "hours-in-months") {
-        expect([rule.from, rule.to].every((m) => m >= 1 && m <= 12)).toBe(true);
-      }
-    }
+    Object.values(seasonalNotes)
+      .flatMap((n) => n.rules)
+      .forEach((rule) => {
+        if (rule.kind === "months" || rule.kind === "hours-in-months") {
+          expect([rule.from, rule.to].every((m) => m >= 1 && m <= 12)).toBe(
+            true,
+          );
+        }
+      });
   });
 });
 

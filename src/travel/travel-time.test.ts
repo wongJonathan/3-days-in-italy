@@ -115,10 +115,10 @@ describe("minutesForDistance", () => {
   });
 
   it("always returns whole minutes, rounded up", () => {
-    for (const km of [0.1, 1.49, 2.7, 13.3, 77.7]) {
+    [0.1, 1.49, 2.7, 13.3, 77.7].forEach((km) => {
       const { minutes } = minutesForDistance(km, PT);
       expect(Number.isInteger(minutes)).toBe(true);
-    }
+    });
   });
 
   it("rejects a negative or non-numeric distance", () => {

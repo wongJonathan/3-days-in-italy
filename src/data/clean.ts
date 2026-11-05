@@ -34,7 +34,7 @@ export const cleanPlaces = (
   const review: ReviewRow[] = [];
   const removedIds = new Set<string>();
 
-  for (const removal of removals) {
+  removals.forEach((removal) => {
     const place = raw.find((p) => p.id === removal.placeId)!;
     const apply = removal.source !== "ai-draft" || removal.approved === true;
     if (apply) removedIds.add(place.id);
@@ -49,20 +49,20 @@ export const cleanPlaces = (
       source: removal.source,
       status: apply ? "applied" : "pending",
     });
-  }
+  });
 
   // Removed places are dropped before any rule runs, so they produce no other review rows.
   const places = structuredClone(raw.filter((p) => !removedIds.has(p.id)));
 
-  for (const place of places) {
+  places.forEach((place) => {
     const row = normalizeTags(place);
     if (row) review.push(row);
-  }
+  });
 
   validate(places, corrections);
   const byId = new Map(places.map((p) => [p.id, p]));
 
-  for (const correction of corrections) {
+  corrections.forEach((correction) => {
     const place = byId.get(correction.placeId)!;
     const apply =
       correction.source !== "ai-draft" || correction.approved === true;
@@ -82,7 +82,7 @@ export const cleanPlaces = (
       // The Correction type guarantees value matches the field's type.
       Object.assign(place, { [correction.field]: correction.value });
     }
-  }
+  });
 
   review.sort(
     (a, b) =>
@@ -149,7 +149,7 @@ const validateRemovals = (
   const corrected = new Set(corrections.map((c) => c.placeId));
   const seen = new Set<string>();
 
-  for (const r of removals) {
+  removals.forEach((r) => {
     if (!ids.has(r.placeId)) {
       throw new Error(`Removal targets unknown place id "${r.placeId}".`);
     }
@@ -162,14 +162,14 @@ const validateRemovals = (
         `${r.placeId} is both removed and corrected. Delete its corrections.`,
       );
     }
-  }
+  });
 };
 
 const validate = (places: Place[], corrections: Correction[]): void => {
   const byId = new Map(places.map((p) => [p.id, p]));
   const seen = new Set<string>();
 
-  for (const c of corrections) {
+  corrections.forEach((c) => {
     const place = byId.get(c.placeId);
     if (!place) {
       throw new Error(`Correction targets unknown place id "${c.placeId}".`);
@@ -188,5 +188,5 @@ const validate = (places: Place[], corrections: Correction[]): void => {
         `Stale correction: ${c.placeId} field "${c.field}" already equals the corrected value. Remove it.`,
       );
     }
-  }
+  });
 };

@@ -29,8 +29,8 @@ describe("Interest chips", () => {
   });
 
   it("feeds Avoid Crowds from tags that exist", () => {
-    for (const tag of ["quiet", "hidden-gem", "tourist-heavy"]) {
+    ["quiet", "hidden-gem", "tourist-heavy"].forEach((tag) => {
       expect(allTags.has(tag)).toBe(true);
-    }
+    });
   });
 });

@@ -102,7 +102,7 @@ export const scheduleDay = ({
   let clock = window.start;
   let previous: SchedulablePlace | null = null;
 
-  for (const { place, rules, notBefore } of stops) {
+  stops.forEach(({ place, rules, notBefore }) => {
     const travel = previous ? travelTime(previous, place, mode) : null;
     const arrive = clock + (travel?.minutes ?? 0);
     const visitMinutes = place.duration_minutes ?? DEFAULT_VISIT_MINUTES;
@@ -124,7 +124,7 @@ export const scheduleDay = ({
     });
     clock = end;
     previous = place;
-  }
+  });
 
   const last = scheduled.at(-1);
   if (last && last.end > window.end) {

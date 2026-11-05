@@ -53,12 +53,12 @@ export const scorePlace = (
 
   if (isMustSee) reasons.push({ kind: "must-see", points: MUST_SEE_POINTS });
 
-  for (const interest of prefs.interests) {
-    if (interest === "avoid-crowds") continue;
+  prefs.interests.forEach((interest) => {
+    if (interest === "avoid-crowds") return;
     if (INTEREST_TAGS[interest].tags.some((tag) => tags.has(tag))) {
       reasons.push({ kind: "interest", interest, points: INTEREST_POINTS });
     }
-  }
+  });
 
   reasons.push({
     kind: "rating",

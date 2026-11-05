@@ -87,7 +87,7 @@ const parseWeek = (raw: string): WeekHours | null => {
 
     const range = parseRange(rangeText);
     if (!range) return null;
-    for (const day of currentDays ?? ALL_DAYS) week[day].push(range);
+    (currentDays ?? ALL_DAYS).forEach((day) => week[day].push(range));
     rangeCount++;
   }
 

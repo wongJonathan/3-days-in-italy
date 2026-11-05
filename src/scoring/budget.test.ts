@@ -17,9 +17,9 @@ describe("budgetGroup", () => {
   });
 
   it("treats every price as within budget when no Budget is set", () => {
-    for (const price of ["€", "€€", "€€€", "€€€€"] as const) {
+    (["€", "€€", "€€€", "€€€€"] as const).forEach((price) => {
       expect(budgetGroup(price, null)).toBe("within");
-    }
+    });
   });
 
   it("works at the ends of the scale", () => {
