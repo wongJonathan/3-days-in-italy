@@ -1,3 +1,24 @@
+// EXPERIMENT (branch experiment/mui-place-list): MUI version. Same logic as
+// main (onboarding.ts); only the markup differs.
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Autocomplete,
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Chip,
+  Divider,
+  FormControlLabel,
+  FormGroup,
+  Stack,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
 import { useMemo, useState } from "react";
 import type { CleanPlace } from "../data/place.ts";
 import type { IsoDate } from "../hours/calendar.ts";
@@ -9,12 +30,8 @@ import {
   tripDates,
   tuneSummary,
 } from "../onboarding/onboarding.ts";
-import { BASE_CITY_NAMES, type BaseCity } from "../preferences/base-cities.ts";
-import {
-  INTERESTS,
-  interestLabel,
-  type Interest,
-} from "../preferences/interests.ts";
+import { BASE_CITY_NAMES } from "../preferences/base-cities.ts";
+import { INTERESTS, interestLabel } from "../preferences/interests.ts";
 import {
   DEFAULT_PREFERENCES,
   type Pace,
@@ -38,8 +55,9 @@ const PACES: { value: Pace; label: string; hint: string }[] = [
   { value: "packed", label: "Packed", hint: "6 sights a day" },
 ];
 
-const BUDGETS: { value: PriceLevel | null; label: string }[] = [
-  { value: null, label: "Any" },
+/** "any" stands for "no Budget" (null): toggle buttons need a string value. */
+const BUDGETS: { value: PriceLevel | "any"; label: string }[] = [
+  { value: "any", label: "Any" },
   { value: "€", label: "€" },
   { value: "€€", label: "€€" },
   { value: "€€€", label: "€€€" },
@@ -51,9 +69,50 @@ const MODES: { value: TransportMode; label: string }[] = [
   { value: "rental-car", label: "Rental car" },
 ];
 
+/**
+ * The segmented buttons for Pace, Budget and Transport: equal widths that fill
+ * the row (up to a comfortable maximum), 44 px touch targets, roomy padding.
+ * One shared style, so all three groups always look the same.
+ */
+const SEGMENTED = {
+  width: "100%",
+  maxWidth: 560,
+  "& .MuiToggleButton-root": {
+    flex: 1,
+    minHeight: 44,
+    px: 2,
+    py: 1,
+    lineHeight: 1.3,
+    fontWeight: 600,
+  },
+} as const;
+
 /** Adds `item` if missing, removes it if present. */
 const toggle = <T,>(items: T[], item: T): T[] =>
   items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
+
+/** A labelled group of settings inside "Tune it". */
+const Setting = ({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) => (
+  <Box sx={{ mb: 2.5 }}>
+    <Typography sx={{ fontWeight: 600, mb: 0.75 }}>
+      {label}{" "}
+      {hint && (
+        <Typography component="span" variant="body2" color="text.secondary">
+          {hint}
+        </Typography>
+      )}
+    </Typography>
+    {children}
+  </Box>
+);
 
 /**
  * The one-screen onboarding from the design doc (§4.2): Start Date with
@@ -63,7 +122,6 @@ const toggle = <T,>(items: T[], item: T): T[] =>
 export const Onboarding = ({ places, today, onStart }: Props) => {
   const [startDate, setStartDate] = useState<IsoDate>(today);
   const [prefs, setPrefs] = useState<Preferences>(DEFAULT_PREFERENCES);
-  const [mustSeeQuery, setMustSeeQuery] = useState("");
 
   const update = (changes: Partial<Preferences>) =>
     setPrefs((p) => ({ ...p, ...changes }));
@@ -80,21 +138,11 @@ export const Onboarding = ({ places, today, onStart }: Props) => {
     () => (validDate ? cityCounts(places, startDate) : null),
     [places, startDate, validDate],
   );
-
   const byName = useMemo(
     () => [...places].sort((a, b) => a.name.localeCompare(b.name)),
     [places],
   );
-  const placeName = (id: string) => places.find((p) => p.id === id)?.name ?? id;
-
-  const addMustSee = (name: string) => {
-    const match = places.find((p) => p.name === name);
-    if (!match) return;
-    if (!prefs.mustSees.includes(match.id)) {
-      update({ mustSees: [...prefs.mustSees, match.id] });
-    }
-    setMustSeeQuery("");
-  };
+  const mustSeePlaces = byName.filter((p) => prefs.mustSees.includes(p.id));
 
   const start = (startEmpty: boolean) => {
     if (validDate) onStart({ startDate, prefs, startEmpty });
@@ -102,245 +150,293 @@ export const Onboarding = ({ places, today, onStart }: Props) => {
 
   return (
     <main className="onboarding">
-      <h1>3 Days in Italy</h1>
-      <p className="lede">
+      <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
+        3 Days in Italy
+      </Typography>
+      <Typography color="text.secondary" sx={{ mb: 3 }}>
         Plan three days from 100 hand-picked places. Only the date is needed.
-      </p>
+      </Typography>
 
-      <section className="field" aria-labelledby="when-label">
-        <label id="when-label" htmlFor="start-date" className="field__label">
-          When does your trip start?
-        </label>
-        <input
+      <Box component="section" sx={{ mb: 3 }}>
+        <TextField
           id="start-date"
           type="date"
-          min={today}
+          label="When does your trip start?"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          aria-describedby="date-notes"
+          error={isPast}
+          helperText={
+            isPast ? "That date has passed. Pick today or later." : undefined
+          }
+          slotProps={{
+            inputLabel: { shrink: true },
+            htmlInput: { min: today, "aria-describedby": "date-notes" },
+          }}
         />
         <div id="date-notes" aria-live="polite">
-          {isPast && (
-            <p className="field__error">
-              That date has passed. Pick today or later.
-            </p>
-          )}
           {validDate && (
             <>
-              <p className="dates">
+              <Typography sx={{ fontWeight: 600, mt: 1 }}>
                 {tripDates(startDate).map(formatDate).join(" · ")}
-              </p>
+              </Typography>
               {notes.length > 0 && (
-                <ul className="notes">
+                <Box
+                  component="ul"
+                  sx={{
+                    m: 0,
+                    pl: 2.5,
+                    color: "text.secondary",
+                    fontSize: "0.9375rem",
+                  }}
+                >
                   {notes.map((note) => (
                     <li key={`${note.kind}-${note.date}`}>
                       {headsUpText(note)}
                     </li>
                   ))}
-                </ul>
+                </Box>
               )}
             </>
           )}
         </div>
-      </section>
+      </Box>
 
-      <fieldset className="field">
-        <legend className="field__label">
+      <Box component="fieldset" sx={{ border: 0, p: 0, m: 0, mb: 3 }}>
+        <Typography component="legend" sx={{ fontWeight: 600, mb: 0.75 }}>
           Where?{" "}
-          <span className="field__hint">
+          <Typography component="span" variant="body2" color="text.secondary">
             Optional: leave empty and we'll choose
-          </span>
-        </legend>
-        <ul className="cities">
-          {BASE_CITY_NAMES.map((city: BaseCity) => (
-            <li key={city}>
-              <label className="city">
-                <input
-                  type="checkbox"
-                  checked={prefs.tripArea.includes(city)}
-                  onChange={() =>
-                    update({ tripArea: toggle(prefs.tripArea, city) })
-                  }
-                />
-                <span className="city__name">{city}</span>
-                {counts && (
-                  <span className="city__count">
-                    {counts[city].open} of {counts[city].total} open on your
-                    dates
-                  </span>
-                )}
-                {counts && counts[city].towns.length > 0 && (
-                  <span className="city__towns">
-                    + day trips: {counts[city].towns.join(", ")}
-                  </span>
-                )}
-              </label>
-            </li>
-          ))}
-        </ul>
-      </fieldset>
-
-      <details className="tune">
-        <summary>
-          <span className="field__label">Tune it</span>{" "}
-          <span className="field__hint">Optional</span>
-          <span className="tune__summary">{tuneSummary(prefs)}</span>
-        </summary>
-
-        <fieldset className="field">
-          <legend className="field__label">Interests</legend>
-          <div className="chips">
-            {INTERESTS.map((interest: Interest) => (
-              <label
-                key={interest}
-                className={`chip${interest === "avoid-crowds" ? " chip--divided" : ""}`}
+          </Typography>
+        </Typography>
+        <FormGroup sx={{ gap: 1 }}>
+          {BASE_CITY_NAMES.map((city) => {
+            const checked = prefs.tripArea.includes(city);
+            return (
+              <Card
+                key={city}
+                variant="outlined"
+                sx={{
+                  px: 1.5,
+                  py: 0.5,
+                  borderColor: checked ? "primary.main" : "divider",
+                  bgcolor: checked ? "var(--accent-soft)" : "background.paper",
+                }}
               >
-                <input
-                  type="checkbox"
-                  checked={prefs.interests.includes(interest)}
-                  onChange={() =>
-                    update({ interests: toggle(prefs.interests, interest) })
+                <FormControlLabel
+                  sx={{ alignItems: "flex-start", width: "100%", m: 0 }}
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={() =>
+                        update({ tripArea: toggle(prefs.tripArea, city) })
+                      }
+                    />
+                  }
+                  label={
+                    <Box sx={{ py: 1 }}>
+                      <Typography component="span" sx={{ fontWeight: 600 }}>
+                        {city}
+                      </Typography>
+                      {counts && (
+                        <Typography variant="body2" color="text.secondary">
+                          {counts[city].open} of {counts[city].total} open on
+                          your dates
+                        </Typography>
+                      )}
+                      {counts && counts[city].towns.length > 0 && (
+                        <Typography variant="body2" color="text.secondary">
+                          + day trips: {counts[city].towns.join(", ")}
+                        </Typography>
+                      )}
+                    </Box>
                   }
                 />
-                {interestLabel(interest)}
-              </label>
-            ))}
-          </div>
-        </fieldset>
+              </Card>
+            );
+          })}
+        </FormGroup>
+      </Box>
 
-        <fieldset className="field">
-          <legend className="field__label">Pace</legend>
-          <div className="chips">
-            {PACES.map(({ value, label, hint }) => (
-              <label key={value} className="chip">
-                <input
-                  type="radio"
-                  name="pace"
-                  checked={prefs.pace === value}
-                  onChange={() => update({ pace: value })}
-                />
-                {label} <span className="chip__hint">{hint}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="field">
-          <legend className="field__label">
-            Budget <span className="field__hint">A target, not a limit</span>
-          </legend>
-          <div className="chips">
-            {BUDGETS.map(({ value, label }) => (
-              <label key={label} className="chip">
-                <input
-                  type="radio"
-                  name="budget"
-                  checked={prefs.budget === value}
-                  onChange={() => update({ budget: value })}
-                />
-                {label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="field">
-          <legend className="field__label">Getting between cities</legend>
-          <div className="chips">
-            {MODES.map(({ value, label }) => (
-              <label key={value} className="chip">
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={prefs.mode === value}
-                  onChange={() => update({ mode: value })}
-                />
-                {label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset className="field">
-          <legend className="field__label">Meals</legend>
-          <div className="chips">
-            <label className="chip">
-              <input
-                type="checkbox"
-                checked={prefs.lunch}
-                onChange={() => update({ lunch: !prefs.lunch })}
-              />
-              Lunch
-            </label>
-            <label className="chip">
-              <input
-                type="checkbox"
-                checked={prefs.dinner}
-                onChange={() => update({ dinner: !prefs.dinner })}
-              />
-              Dinner
-            </label>
-          </div>
-        </fieldset>
-
-        <div className="field">
-          <label htmlFor="must-see" className="field__label">
-            Must-Sees <span className="field__hint">Always included</span>
-          </label>
-          <input
-            id="must-see"
-            list="place-names"
-            placeholder="Type a place…"
-            value={mustSeeQuery}
-            onChange={(e) => {
-              setMustSeeQuery(e.target.value);
-              addMustSee(e.target.value);
-            }}
-          />
-          <datalist id="place-names">
-            {byName.map((p) => (
-              <option key={p.id} value={p.name} />
-            ))}
-          </datalist>
-          {prefs.mustSees.length > 0 && (
-            <ul className="chips" aria-label="Chosen Must-Sees">
-              {prefs.mustSees.map((id) => (
-                <li key={id} className="chip chip--selected">
-                  {placeName(id)}
-                  <button
-                    type="button"
-                    className="chip__remove"
-                    aria-label={`Remove ${placeName(id)}`}
+      <Accordion variant="outlined" disableGutters sx={{ mb: 3 }}>
+        <AccordionSummary>
+          <Box>
+            <Typography sx={{ fontWeight: 600 }}>
+              Tune it{" "}
+              <Typography
+                component="span"
+                variant="body2"
+                color="text.secondary"
+              >
+                Optional
+              </Typography>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {tuneSummary(prefs)}
+            </Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Setting label="Interests">
+            <Stack
+              direction="row"
+              spacing={1}
+              useFlexGap
+              sx={{ flexWrap: "wrap" }}
+              role="group"
+              aria-label="Interests"
+            >
+              {INTERESTS.map((interest) => {
+                const selected = prefs.interests.includes(interest);
+                const chip = (
+                  <Chip
+                    key={interest}
+                    label={interestLabel(interest)}
+                    color={selected ? "primary" : "default"}
+                    variant={selected ? "filled" : "outlined"}
+                    // MUI's Chip doesn't announce on/off, so say it explicitly.
+                    aria-pressed={selected}
                     onClick={() =>
-                      update({ mustSees: toggle(prefs.mustSees, id) })
+                      update({ interests: toggle(prefs.interests, interest) })
                     }
-                  >
-                    ×
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </details>
+                  />
+                );
+                return chip;
+              })}
+            </Stack>
+          </Setting>
 
+          <Setting label="Pace">
+            <ToggleButtonGroup
+              exclusive
+              color="primary"
+              sx={SEGMENTED}
+              aria-label="Pace"
+              value={prefs.pace}
+              // Clicking the chosen option again would send null; keep the choice.
+              onChange={(_, value: Pace | null) =>
+                value && update({ pace: value })
+              }
+            >
+              {PACES.map(({ value, label, hint }) => (
+                <ToggleButton key={value} value={value}>
+                  {/* Label on top, hint underneath, so the button isn't cramped. */}
+                  <Stack spacing={0.25}>
+                    <span>{label}</span>
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                    >
+                      {hint}
+                    </Typography>
+                  </Stack>
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Setting>
+
+          <Setting label="Budget" hint="A target, not a limit">
+            <ToggleButtonGroup
+              exclusive
+              color="primary"
+              sx={SEGMENTED}
+              aria-label="Budget"
+              value={prefs.budget ?? "any"}
+              onChange={(_, value: PriceLevel | "any" | null) =>
+                value && update({ budget: value === "any" ? null : value })
+              }
+            >
+              {BUDGETS.map(({ value, label }) => (
+                <ToggleButton key={value} value={value}>
+                  {label}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Setting>
+
+          <Setting label="Getting between cities">
+            <ToggleButtonGroup
+              exclusive
+              color="primary"
+              sx={SEGMENTED}
+              aria-label="Getting between cities"
+              value={prefs.mode}
+              onChange={(_, value: TransportMode | null) =>
+                value && update({ mode: value })
+              }
+            >
+              {MODES.map(({ value, label }) => (
+                <ToggleButton key={value} value={value}>
+                  {label}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Setting>
+
+          <Setting label="Meals">
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={prefs.lunch}
+                    onChange={() => update({ lunch: !prefs.lunch })}
+                  />
+                }
+                label="Lunch"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={prefs.dinner}
+                    onChange={() => update({ dinner: !prefs.dinner })}
+                  />
+                }
+                label="Dinner"
+              />
+            </FormGroup>
+          </Setting>
+
+          {/* An accessible type-ahead (combobox): a real improvement on <datalist>. */}
+          <Autocomplete
+            multiple
+            filterSelectedOptions
+            options={byName}
+            getOptionLabel={(p) => p.name}
+            isOptionEqualToValue={(a, b) => a.id === b.id}
+            value={mustSeePlaces}
+            onChange={(_, chosen) =>
+              update({ mustSees: chosen.map((p) => p.id) })
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Must-Sees"
+                placeholder="Type a place…"
+                helperText="Always included"
+              />
+            )}
+          />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* .actions keeps the sticky-on-mobile rule (thumb zone). */}
       <div className="actions">
-        <button
-          type="button"
-          className="button button--primary"
+        <Button
+          variant="contained"
+          size="large"
+          disableElevation
           disabled={!validDate}
           onClick={() => start(false)}
         >
           Plan my trip
-        </button>
-        <button
-          type="button"
-          className="button button--link"
+        </Button>
+        <Button
+          variant="text"
           disabled={!validDate}
           onClick={() => start(true)}
         >
           Start with empty days →
-        </button>
+        </Button>
       </div>
     </main>
   );

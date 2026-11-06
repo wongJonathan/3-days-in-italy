@@ -16,7 +16,7 @@ export type Interest =
 
 /** Each tag-matching chip, its label, and the dataset tags it matches. */
 export const INTEREST_TAGS: Record<
-  Exclude<Interest, "avoid-crowds">,
+  Interest,
   { label: string; tags: string[] }
 > = {
   iconic: { label: "Iconic", tags: ["iconic"] },
@@ -31,12 +31,12 @@ export const INTEREST_TAGS: Record<
   romantic: { label: "Romantic", tags: ["romantic"] },
   "hidden-gem": { label: "Hidden Gem", tags: ["hidden-gem"] },
   "local-favorite": { label: "Local Favorite", tags: ["local-favorite"] },
+  "avoid-crowds": { label: "Avoid Crowds", tags: ["avoid-crowds"] },
 };
 
 /** Every chip in display order. Avoid Crowds is last: it changes how the others score. */
 export const INTERESTS: Interest[] = [
-  ...(Object.keys(INTEREST_TAGS) as Exclude<Interest, "avoid-crowds">[]),
-  "avoid-crowds",
+  ...(Object.keys(INTEREST_TAGS) as Interest[]),
 ];
 
 /** The chip's label, e.g. "Hidden Gem" or "Avoid Crowds". */

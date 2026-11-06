@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { createElement } from "react";
 
 /**
  * EXPERIMENT (branch experiment/mui-place-list): an MUI theme matched to the
@@ -18,5 +19,23 @@ export const theme = createTheme({
   typography: {
     fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     button: { textTransform: "none", fontWeight: 600 }, // MUI shouts in CAPS by default
+  },
+  components: {
+    // Every Accordion (Tune it, Other prices) gets an open/close arrow, set
+    // once here. MUI rotates it when the section opens. A plain character, so
+    // the large @mui/icons-material package isn't needed. aria-hidden: the
+    // summary is already announced as expanded or collapsed.
+    MuiAccordionSummary: {
+      defaultProps: {
+        expandIcon: createElement(
+          "span",
+          {
+            "aria-hidden": true,
+            style: { fontSize: "1.25rem", lineHeight: 1 },
+          },
+          "▾",
+        ),
+      },
+    },
   },
 });

@@ -6,6 +6,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import type { CleanPlace } from "../data/place.ts";
 import { dayMapModel } from "../editor/map-model.ts";
 import { scheduleStops } from "../generator/generate-day.ts";
@@ -104,18 +105,23 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
         />
       </div>
 
-      <div className="editor__tabs" role="group" aria-label="Show">
-        {TABS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            className="editor__tab"
-            aria-pressed={tab === value}
-            onClick={() => setTab(value)}
-          >
-            {label}
-          </button>
-        ))}
+      {/* .editor__tabs keeps the rule that shows the tabs only on narrow screens. */}
+      <div className="editor__tabs">
+        <ToggleButtonGroup
+          exclusive
+          fullWidth
+          color="primary"
+          aria-label="Show"
+          value={tab}
+          // Clicking the open tab again would send null; keep it open.
+          onChange={(_, value: Tab | null) => value && setTab(value)}
+        >
+          {TABS.map(({ value, label }) => (
+            <ToggleButton key={value} value={value} sx={{ minHeight: 44 }}>
+              {label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
       </div>
 
       <DayView
@@ -149,20 +155,19 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
               ? `! ${warningCount} Warning${warningCount === 1 ? "" : "s"}`
               : "No Warnings"}
           </span>
-          <button
-            type="button"
-            className="button"
+          <Button
+            variant="outlined"
             onClick={() => dispatch({ type: "regenerate", day: index })}
           >
             ↻ {day.plan.stops.length === 0 ? "Suggest" : "Regenerate"}
-          </button>
-          <button
-            type="button"
-            className="button button--primary"
+          </Button>
+          <Button
+            variant="contained"
+            disableElevation
             onClick={() => dispatch({ type: "finalize", day: index })}
           >
             ✓ Finalize
-          </button>
+          </Button>
         </div>
       )}
     </div>
