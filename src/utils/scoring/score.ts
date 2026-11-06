@@ -11,7 +11,7 @@ export const RATING_WEIGHT = 10;
 export const HIGHLY_RATED = 4.7;
 /** With Avoid Crowds: a `quiet` or `hidden-gem` place gets this once. */
 export const QUIET_POINTS = 6;
-/** With Avoid Crowds: a `tourist-heavy` place gets this. */
+
 export const TOURIST_HEAVY_PENALTY = -12;
 
 export type ScoredPlaceInput = Pick<CleanPlace, "id" | "rating" | "tags">;

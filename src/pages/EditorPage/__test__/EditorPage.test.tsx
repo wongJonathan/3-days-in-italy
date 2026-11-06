@@ -168,9 +168,10 @@ describe("<EditorPage> narrow-screen parts", () => {
     expect(html).toContain(">Add<");
   });
 
-  it("has a bottom bar with the Warning count, Regenerate and Finalize", () => {
+  it("has a bottom bar with the Warning count and Finalize", () => {
     expect(html).toContain('class="mobile-bar"');
     expect(html).toContain("✓ Finalize");
+    expect(html).not.toContain("Regenerate");
   });
 
   it("offers two choices on an empty day", () => {

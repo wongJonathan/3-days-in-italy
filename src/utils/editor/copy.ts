@@ -1,7 +1,6 @@
 import type { DayAvailability } from "../availability/availability.ts";
 import type { SeasonalRule } from "../availability/seasonal.ts";
 import type { CleanPlace } from "../data/place.ts";
-import type { PlannedStop } from "../generator/generate-day.ts";
 import type { IsoDate } from "../hours/calendar.ts";
 import { parseHours } from "../hours/parse.ts";
 import { interestLabel } from "../preferences/interests.ts";
@@ -128,14 +127,6 @@ export const reasonLabel = (reason: Reason): string => {
     case "tourist-heavy":
       return "Busy";
   }
-};
-
-/** The Regenerate button's tooltip, so the traveler knows what survives. */
-export const regenerateHint = (stops: PlannedStop[]): string => {
-  const replaced = stops.filter((s) => s.origin === "generated").length;
-  const kept = stops.length - replaced;
-  if (replaced === 0 && kept === 0) return "Suggests Stops for this day.";
-  return `Replaces ${replaced} suggested Stop${replaced === 1 ? "" : "s"}, keeps ${kept}.`;
 };
 
 /** One € fewer or more than `budget`, or null past the end of the scale. */

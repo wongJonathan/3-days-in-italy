@@ -164,12 +164,6 @@ export const EditorPage = ({
               : "No Warnings"}
           </span>
           <Button
-            variant="outlined"
-            onClick={() => dispatch({ type: "regenerate", day: index })}
-          >
-            ↻ {day.plan.stops.length === 0 ? "Suggest" : "Regenerate"}
-          </Button>
-          <Button
             variant="contained"
             disableElevation
             onClick={() => dispatch({ type: "finalize", day: index })}

@@ -297,7 +297,7 @@ body {
   z-index: 1;
   margin: 0;
   padding: 8px 0;
-  background: var(--surface);
+  background: var(--page);
   border-bottom: 1px solid var(--border);
 }
 

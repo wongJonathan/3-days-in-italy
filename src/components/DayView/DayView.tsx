@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import type { CleanPlace } from "../../utils/data/place.ts";
-import { countLabel, regenerateHint } from "../../utils/editor/copy.ts";
+import { countLabel } from "../../utils/editor/copy.ts";
 import { moveAnnouncement } from "../../utils/editor/move-feedback.ts";
 import { scheduleStops } from "../../utils/generator/generate-day.ts";
 import {
@@ -126,8 +126,6 @@ export const DayView = ({
   };
 
   const regenerate = () => dispatch({ type: "regenerate", day: index });
-  // Shown twice: as the button's tooltip and as the line under the buttons.
-  const hint = regenerateHint(plan.stops);
 
   return (
     <section className="day" aria-labelledby="day-title">
@@ -201,9 +199,6 @@ export const DayView = ({
           className="day__buttons"
           sx={{ flexWrap: "wrap" }}
         >
-          <Button variant="outlined" title={hint} onClick={regenerate}>
-            ↻ {plan.stops.length === 0 ? "Suggest this day" : "Regenerate day"}
-          </Button>
           <Button
             variant="contained"
             disableElevation
@@ -213,9 +208,6 @@ export const DayView = ({
             {warningCount > 0 && ` · ${countLabel(warningCount, "Warning")}`}
           </Button>
         </Stack>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-          {hint}
-        </Typography>
       </header>
 
       {/* The scrolling part, like the Place list's results: banners, then Stops. */}

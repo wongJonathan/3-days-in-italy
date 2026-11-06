@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import type { PlannedStop } from "../generator/generate-day.ts";
 import {
   countLabel,
   emptyGroupText,
@@ -7,7 +6,6 @@ import {
   groupTitle,
   hoursLabel,
   reasonLabel,
-  regenerateHint,
   travelLabel,
   warningText,
 } from "./copy.ts";
@@ -208,33 +206,6 @@ describe("reasonLabel", () => {
       "★ 4.8",
     );
     expect(reasonLabel({ kind: "quiet", points: 6 })).toBe("Quiet");
-  });
-});
-
-describe("regenerateHint", () => {
-  const stop = (origin: PlannedStop["origin"]): PlannedStop => ({
-    placeId: origin,
-    origin,
-    meal: null,
-  });
-
-  it("says what Regenerate replaces and what it keeps", () => {
-    expect(
-      regenerateHint([
-        stop("generated"),
-        stop("generated"),
-        stop("generated"),
-        stop("must-see"),
-        stop("added"),
-      ]),
-    ).toBe("Replaces 3 suggested Stops, keeps 2.");
-    expect(regenerateHint([stop("generated"), stop("added")])).toBe(
-      "Replaces 1 suggested Stop, keeps 1.",
-    );
-  });
-
-  it("offers to suggest a day when there is nothing to replace", () => {
-    expect(regenerateHint([])).toBe("Suggests Stops for this day.");
   });
 });
 
