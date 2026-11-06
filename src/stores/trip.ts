@@ -66,7 +66,7 @@ export type NewTrip = {
   startEmpty: boolean;
 };
 
-const TRIP_LENGTH = 3;
+export const TRIP_LENGTH = 3;
 
 /** A new Trip with Day 1 open (planned, or empty for "Start with empty days"). */
 export const createTrip = (
