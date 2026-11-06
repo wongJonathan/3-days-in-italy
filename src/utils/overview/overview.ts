@@ -27,13 +27,25 @@ export const pickActive = (
 
 export const scrollTargetFor = ({
   itemTop,
-  line,
-  scrollY,
+  lineAt,
+  maxScroll,
 }: {
   itemTop: number;
-  line: number;
-  scrollY: number;
-}): number => Math.max(0, scrollY + itemTop - line + 1);
+  lineAt: (scroll: number) => number;
+  maxScroll: number;
+}): number => {
+  const crossed = (scroll: number) => itemTop - scroll <= lineAt(scroll) - 1;
+  let low = 0;
+  let high = Math.max(0, Math.ceil(maxScroll));
+  if (!crossed(high)) return high;
+  // The item only rises toward the line as the page scrolls, so binary search.
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    if (crossed(mid)) high = mid;
+    else low = mid + 1;
+  }
+  return low;
+};
 
 export const dayHeading = (
   index: number,

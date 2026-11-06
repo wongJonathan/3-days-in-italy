@@ -35,6 +35,10 @@ _Avoid_: Done, locked, saved
 A read-only view of the whole Trip as a single scroll, day after day, with a map of the Stops for the day being read. It can only be opened once every Trip Day is Finalized.
 _Avoid_: Itinerary, summary, trip panel
 
+**Shared Trip**:
+A read-only copy of a Finalized Trip, carried entirely inside a link. It's a snapshot: later edits to the original Trip don't change it, and opening it never touches the visitor's own Trip.
+_Avoid_: Shared itinerary, public trip, export
+
 **Stop**:
 A Place scheduled on a Trip Day, at a position in that day's order and with computed arrival and departure times. The same Place can be a Stop on more than one Trip Day.
 _Avoid_: Item, entry, activity

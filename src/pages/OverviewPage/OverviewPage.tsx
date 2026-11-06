@@ -36,18 +36,25 @@ type Position = { day: number; stop: number };
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Where the reading line is right now (see readingLine). */
-const currentLine = (map: HTMLElement | null): number => {
-  // Narrow screens: the map is pinned on top, so the list area starts below it.
-  const areaTop =
-    map && window.matchMedia(NARROW).matches
-      ? Math.max(0, map.getBoundingClientRect().bottom)
-      : 0;
-  return readingLine({
-    areaTop,
-    viewportHeight: window.innerHeight,
-    scrollY: window.scrollY,
-  });
+/**
+ * Where the reading line will be on screen at any scroll position (see
+ * readingLine). Narrow screens: the list area starts under the map, which
+ * scrolls up with the top bar and then pins to the top. The top bar is never
+ * sticky, so its page position says where the map starts.
+ */
+const lineAt = (map: HTMLElement | null) => {
+  const bar = map?.previousElementSibling;
+  const narrow = map && bar && window.matchMedia(NARROW).matches;
+  const mapHeight = narrow ? map.offsetHeight : 0;
+  const mapBottom = narrow
+    ? bar.getBoundingClientRect().bottom + window.scrollY + mapHeight
+    : 0;
+  return (scroll: number) =>
+    readingLine({
+      areaTop: narrow ? Math.max(mapHeight, mapBottom - scroll) : 0,
+      viewportHeight: window.innerHeight,
+      scrollY: scroll,
+    });
 };
 
 const topsOf = (elements: Element[]) =>
@@ -55,7 +62,7 @@ const topsOf = (elements: Element[]) =>
 
 /** Measures which day and Stop sit at the reading line. */
 const measure = (list: HTMLElement, map: HTMLElement | null): Position => {
-  const line = currentLine(map);
+  const line = lineAt(map)(window.scrollY);
   const root = document.documentElement;
   // A couple of pixels' slack: zoomed pages can stop just short of the end.
   const atEnd = window.innerHeight + window.scrollY >= root.scrollHeight - 2;
@@ -109,9 +116,9 @@ const useReadingPosition = () => {
     if (!card) return;
     window.scrollTo({
       top: scrollTargetFor({
-        itemTop: card.getBoundingClientRect().top,
-        line: currentLine(mapRef.current),
-        scrollY: window.scrollY,
+        itemTop: card.getBoundingClientRect().top + window.scrollY,
+        lineAt: lineAt(mapRef.current),
+        maxScroll: document.documentElement.scrollHeight - window.innerHeight,
       }),
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
@@ -257,6 +264,9 @@ export const OverviewPage = ({
                         date={day.date}
                         prefs={trip.prefs}
                         selected={i === current && j === position.stop}
+                        // Like a pin click: scroll it to the reading line,
+                        // and the scroll tracking highlights it.
+                        onSelect={() => scrollToStop(i, scheduled.placeId)}
                       />
                     </li>
                   ))}
