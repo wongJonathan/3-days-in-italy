@@ -10,6 +10,7 @@ import {
   useMap,
 } from "react-leaflet";
 import type { MapFocus, MapModel } from "../editor/map-model.ts";
+import { COLORS } from "./tokens.ts";
 
 /**
  * Background tiles: OpenStreetMap's own tiles. Free, no key or account; the
@@ -79,7 +80,7 @@ const DayMap = ({ model, label }: Props) => (
         // Dashed: an estimate between two points, not a route (design doc §3.2).
         <Polyline
           positions={model.path}
-          pathOptions={{ color: "#0b6b4f", weight: 3, dashArray: "6 8" }}
+          pathOptions={{ color: COLORS.accent, weight: 3, dashArray: "6 8" }}
         />
       )}
       {model.markers.map((m) => (

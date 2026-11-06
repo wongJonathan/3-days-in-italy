@@ -1,24 +1,14 @@
 /*
- * EXPERIMENT (branch experiment/mui-place-list): with every component in MUI,
- * this file only holds what MUI doesn't: colour tokens (also used by MUI `sx`
- * and the Leaflet pins), the page layout (columns, scrolling, narrow-screen
- * tabs), the map, and a few app-specific pieces. Component looks live in
- * src/ui/theme.ts and each component's `sx`.
+ * With every component in MUI, this file only holds what MUI doesn't: the page
+ * layout (columns, scrolling, narrow-screen tabs), the map, and a few
+ * app-specific pieces. Component looks live in src/ui/theme.ts and each
+ * component's `sx`.
+ *
+ * Colours: the var(--…) values used here are NOT defined in this file. They
+ * come from src/ui/tokens.ts (the single source), which App puts on :root.
  */
 
 :root {
-  --text: #1f2328;
-  --muted: #59636e;
-  --border: #d1d9e0;
-  --surface: #ffffff;
-  --surface-alt: #f6f8fa;
-  --accent: #0b6b4f; /* Italian green, readable on white (WCAG AA) */
-  --accent-soft: #e3f2ec;
-  --error: #b42318;
-  --warning-bg: #fff4d6;
-  --warning-text: #7a4b00; /* amber, readable on --warning-bg (WCAG AA) */
-  --radius: 10px;
-
   font-family:
     system-ui,
     -apple-system,
@@ -237,19 +227,19 @@ body {
   height: 28px;
   border-radius: 50%;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font:
     700 0.8125rem/1 system-ui,
     sans-serif;
-  border: 2px solid #fff;
+  border: 2px solid var(--on-accent);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
   box-sizing: border-box;
 }
 
 /* A Stop with a Warning: amber ring, same number (shape + colour, not colour alone) */
 .map-pin--warning {
-  border-color: #a86f00;
-  box-shadow: 0 0 0 2px #a86f00;
+  border-color: var(--warning-ring);
+  box-shadow: 0 0 0 2px var(--warning-ring);
 }
 
 /* ---------- Narrow screens: tabs and a bottom bar (design doc §3.8) ---------- */

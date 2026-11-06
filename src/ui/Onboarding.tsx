@@ -1,5 +1,4 @@
-// EXPERIMENT (branch experiment/mui-place-list): MUI version. Same logic as
-// main (onboarding.ts); only the markup differs.
+// The onboarding screen, built with MUI. Its logic lives in onboarding.ts.
 import {
   Accordion,
   AccordionDetails,

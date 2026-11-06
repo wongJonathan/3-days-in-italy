@@ -1,4 +1,3 @@
-// EXPERIMENT (branch experiment/mui-place-list): MUI version.
 import { Alert, Button, Stack } from "@mui/material";
 
 type Props = {

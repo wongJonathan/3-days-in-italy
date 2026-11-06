@@ -1,21 +1,21 @@
 import { createTheme } from "@mui/material/styles";
 import { createElement } from "react";
+import { COLORS, RADIUS } from "./tokens.ts";
 
 /**
- * EXPERIMENT (branch experiment/mui-place-list): an MUI theme matched to the
- * app's existing look (index.css tokens), so MUI components blend in.
- * Values are copied from :root in index.css; if MUI is kept, they should
- * come from one shared source instead.
+ * The MUI theme. Colours and radius come from tokens.ts, the same source as
+ * the CSS variables in index.css, so MUI components and plain CSS always match.
  */
 export const theme = createTheme({
   palette: {
-    primary: { main: "#0b6b4f", contrastText: "#ffffff" }, // --accent
-    warning: { main: "#7a4b00", light: "#fff4d6" }, // --warning-text / --warning-bg
-    error: { main: "#b42318" }, // --error
-    text: { primary: "#1f2328", secondary: "#59636e" }, // --text / --muted
-    divider: "#d1d9e0", // --border
+    primary: { main: COLORS.accent, contrastText: COLORS.onAccent },
+    warning: { main: COLORS.warningText, light: COLORS.warningBg },
+    error: { main: COLORS.error },
+    text: { primary: COLORS.text, secondary: COLORS.muted },
+    background: { default: COLORS.surface, paper: COLORS.surface },
+    divider: COLORS.border,
   },
-  shape: { borderRadius: 10 }, // --radius
+  shape: { borderRadius: RADIUS },
   typography: {
     fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     button: { textTransform: "none", fontWeight: 600 }, // MUI shouts in CAPS by default

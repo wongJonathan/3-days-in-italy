@@ -1,3 +1,4 @@
+import { GlobalStyles } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import { PLACES } from "./data/places.ts";
@@ -7,6 +8,7 @@ import { Editor } from "./ui/Editor.tsx";
 import { Notices } from "./ui/Notices.tsx";
 import { Onboarding } from "./ui/Onboarding.tsx";
 import { theme } from "./ui/theme.ts";
+import { cssVariables } from "./ui/tokens.ts";
 
 /** A saved Trip opens straight away in the editor; otherwise onboarding. */
 const App = () => {
@@ -24,9 +26,11 @@ const App = () => {
     />
   );
 
-  // EXPERIMENT: MUI theme for the Place list. No CssBaseline, so nothing else changes.
+  // MUI theme for every component. No CssBaseline (MUI's global reset): index.css sets the base styles.
   return (
     <ThemeProvider theme={theme}>
+      {/* The colour tokens as CSS variables (--accent, …), from the single source. */}
+      <GlobalStyles styles={{ ":root": cssVariables() }} />
       {trip ? (
         <Editor
           trip={trip}

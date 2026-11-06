@@ -1,6 +1,4 @@
-// EXPERIMENT (branch experiment/mui-place-list): the Place list rebuilt with
-// MUI components. The logic (buildPlaceList, filters, Add, Must-See) is
-// unchanged; only the markup differs from main.
+// The Place list, built with MUI. Its logic lives in editor/place-list.ts.
 import {
   Accordion,
   AccordionDetails,
@@ -109,7 +107,7 @@ export const PlaceList = ({ trip, places, dispatch, onAdded }: Props) => {
         key={place.id}
         component="li"
         variant="outlined"
-        sx={{ bgcolor: closed ? "grey.50" : "background.paper" }}
+        sx={{ bgcolor: closed ? "var(--surface-alt)" : "background.paper" }}
       >
         <CardContent
           sx={{
