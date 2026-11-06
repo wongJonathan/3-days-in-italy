@@ -184,7 +184,7 @@ body {
   top: 0;
   z-index: 1;
   padding: 4px 0;
-  background: var(--surface);
+  background: var(--page);
 }
 
 /* ---------- Map (design doc §3.2) ---------- */
