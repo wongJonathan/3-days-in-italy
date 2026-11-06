@@ -23,6 +23,7 @@ import { formatDate } from "../../utils/format.ts";
 import { scheduleTrip, type Trip } from "../../stores/trip.ts";
 import { Connector } from "../../components/DayView/Connector.tsx";
 import { StopCard } from "../../components/DayView/StopCard.tsx";
+import { ShareButton } from "../../components/ShareButton/ShareButton.tsx";
 
 /** Loaded as a separate file, like in the editor. */
 const DayMap = lazy(() => import("../../components/DayMap/DayMap.tsx"));
@@ -131,21 +132,27 @@ type Props = {
   /** Every day is finalized (App only shows this page then). */
   trip: Trip;
   places: CleanPlace[];
-  /** "Edit this trip": back to the editor, on this day. */
-  onEdit: (day: number) => void;
-  /** "Plan a new trip" (App confirms before deleting). */
-  onNewTrip: () => void;
   /** App-wide banners (storage, removed Stops). */
   notices?: ReactNode;
-};
+} & (
+  | {
+      /** The traveler's own Trip: it can be shared, edited or replaced. */
+      kind: "own";
+      /** "Edit this trip": back to the editor, on this day. */
+      onEdit: (day: number) => void;
+      /** "Plan a new trip" (App confirms before deleting). */
+      onNewTrip: () => void;
+    }
+  | {
+      /** A Shared Trip opened from a link: read-only. */
+      kind: "shared";
+      /** "Plan your own trip": leaves for the visitor's own planner. */
+      onPlanOwn: () => void;
+    }
+);
 
-export const OverviewPage = ({
-  trip,
-  places,
-  onEdit,
-  onNewTrip,
-  notices,
-}: Props) => {
+export const OverviewPage = (props: Props) => {
+  const { trip, places, notices } = props;
   const placesById = useMemo(
     () => new Map(places.map((p) => [p.id, p])),
     [places],
@@ -181,20 +188,32 @@ export const OverviewPage = ({
         >
           <div>
             <Typography component="h1" variant="h5">
-              Your trip
+              {props.kind === "own" ? "Your trip" : "Shared trip"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {formatDate(first)} – {formatDate(last)}
             </Typography>
           </div>
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" onClick={() => onEdit(current)}>
-              Edit this trip
+          {props.kind === "own" ? (
+            <Stack
+              direction="row"
+              spacing={1}
+              useFlexGap
+              sx={{ flexWrap: "wrap" }}
+            >
+              <ShareButton trip={trip} />
+              <Button variant="outlined" onClick={() => props.onEdit(current)}>
+                Edit this trip
+              </Button>
+              <Button variant="text" onClick={props.onNewTrip}>
+                Plan a new trip
+              </Button>
+            </Stack>
+          ) : (
+            <Button variant="contained" onClick={props.onPlanOwn}>
+              Plan your own trip
             </Button>
-            <Button variant="text" onClick={onNewTrip}>
-              Plan a new trip
-            </Button>
-          </Stack>
+          )}
         </Stack>
       </header>
 

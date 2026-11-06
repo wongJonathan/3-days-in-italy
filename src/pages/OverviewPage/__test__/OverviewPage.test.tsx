@@ -10,6 +10,7 @@ import { OverviewPage } from "../OverviewPage.tsx";
 const render = (trip: Trip) =>
   renderToStaticMarkup(
     <OverviewPage
+      kind="own"
       trip={trip}
       places={PLACES}
       onEdit={() => {}}
@@ -38,9 +39,10 @@ const trip = finalizeAll(
 describe("<OverviewPage>", () => {
   const html = render(trip);
 
-  it("shows the trip's dates and both actions", () => {
+  it("shows the trip's dates and its actions", () => {
     expect(html).toContain("Your trip");
     expect(html).toContain("Fri 6 Nov – Sun 8 Nov");
+    expect(html).toContain("Share link");
     expect(html).toContain("Edit this trip");
     expect(html).toContain("Plan a new trip");
   });
@@ -93,5 +95,23 @@ describe("<OverviewPage>", () => {
     const out = render(empty);
     expect(out.match(/Nothing planned/g)).toHaveLength(3);
     expect(out).toContain("0 Stops");
+  });
+
+  it("shows a Shared Trip read-only, with only a way to plan your own", () => {
+    const shared = renderToStaticMarkup(
+      <OverviewPage
+        kind="shared"
+        trip={trip}
+        places={PLACES}
+        onPlanOwn={() => {}}
+      />,
+    );
+    expect(shared).toContain("Shared trip");
+    expect(shared).toContain("Fri 6 Nov – Sun 8 Nov");
+    expect(shared).toContain("Plan your own trip");
+    expect(shared).not.toContain("Your trip");
+    expect(shared).not.toContain("Share link");
+    expect(shared).not.toContain("Edit this trip");
+    expect(shared).not.toContain("Plan a new trip");
   });
 });
