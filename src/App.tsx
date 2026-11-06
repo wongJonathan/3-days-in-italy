@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import { PLACES } from "./data/places.ts";
 import { todayInRome } from "./hours/calendar.ts";
@@ -5,6 +6,7 @@ import { useTrip } from "./trip/useTrip.ts";
 import { Editor } from "./ui/Editor.tsx";
 import { Notices } from "./ui/Notices.tsx";
 import { Onboarding } from "./ui/Onboarding.tsx";
+import { theme } from "./ui/theme.ts";
 
 /** A saved Trip opens straight away in the editor; otherwise onboarding. */
 const App = () => {
@@ -22,19 +24,24 @@ const App = () => {
     />
   );
 
-  return trip ? (
-    <Editor
-      trip={trip}
-      places={PLACES}
-      dispatch={dispatch}
-      onReset={reset}
-      notices={notices}
-    />
-  ) : (
-    <>
-      <div className="onboarding__notices">{notices}</div>
-      <Onboarding places={PLACES} today={today} onStart={start} />
-    </>
+  // EXPERIMENT: MUI theme for the Place list. No CssBaseline, so nothing else changes.
+  return (
+    <ThemeProvider theme={theme}>
+      {trip ? (
+        <Editor
+          trip={trip}
+          places={PLACES}
+          dispatch={dispatch}
+          onReset={reset}
+          notices={notices}
+        />
+      ) : (
+        <>
+          <div className="onboarding__notices">{notices}</div>
+          <Onboarding places={PLACES} today={today} onStart={start} />
+        </>
+      )}
+    </ThemeProvider>
   );
 };
 

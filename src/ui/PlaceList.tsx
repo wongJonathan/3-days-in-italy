@@ -1,3 +1,22 @@
+// EXPERIMENT (branch experiment/mui-place-list): the Place list rebuilt with
+// MUI components. The logic (buildPlaceList, filters, Add, Must-See) is
+// unchanged; only the markup differs from main.
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Chip,
+  FormControlLabel,
+  Stack,
+  TextField,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import type { CleanPlace } from "../data/place.ts";
 import {
@@ -34,6 +53,21 @@ export const PLACE_SEARCH_ID = "place-search";
 const toggle = <T,>(items: T[], item: T): T[] =>
   items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
 
+/** A group heading with its count (also the sticky heading inside the scroll). */
+const GroupHeading = ({ title, count }: { title: string; count: number }) => (
+  <Typography
+    component="h3"
+    variant="subtitle2"
+    className="group__title"
+    sx={{ fontWeight: 600 }}
+  >
+    {title}{" "}
+    <Box component="span" sx={{ color: "text.secondary", fontWeight: 400 }}>
+      {count}
+    </Box>
+  </Typography>
+);
+
 /** The Place list for the open day: filters, budget groups, Add and Must-See (design doc §3.7). */
 export const PlaceList = ({ trip, places, dispatch }: Props) => {
   const [filters, setFilters] = useState<ListFilters>(DEFAULT_FILTERS);
@@ -66,74 +100,106 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
         : { kind: "scored", points: r.points, reasons: r.reasons },
     );
     const city = baseCityOf(place);
+    const closed = r.availability.kind === "closed";
     return (
-      <li
+      <Card
         key={place.id}
-        className={`place-row${r.availability.kind === "closed" ? " place-row--closed" : ""}`}
+        component="li"
+        variant="outlined"
+        sx={{ bgcolor: closed ? "grey.50" : "background.paper" }}
       >
-        <div className="place-row__main">
-          <span className="place-row__name">{place.name}</span>
-          <span className="place-row__meta">
-            {[
-              place.type.replaceAll("_", " "),
-              `★ ${place.rating}`,
-              place.price_range,
-              place.duration_minutes
-                ? formatDuration(place.duration_minutes)
-                : null,
-              place.city !== city ? `${place.city} (near ${city})` : place.city,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </span>
-          <span className="place-row__meta">
-            {hoursLabel(place, r.availability)}
-          </span>
-          {chips.length > 0 && (
-            <span className="place-row__meta">
-              why: {chips.slice(0, MAX_CHIPS).map(reasonLabel).join(" · ")}
-            </span>
-          )}
-          <span className="place-row__flags">
-            {r.onOtherDays.map((i) => (
-              <span key={i} className="tag tag--warning">
-                Already planned for Day {i + 1} ({formatDate(trip.days[i].date)}
-                )
-              </span>
-            ))}
-            {r.points === null && (
-              <span className="tag tag--quiet">Rated under 4.0</span>
+        <CardContent
+          sx={{
+            display: "flex",
+            gap: 1.5,
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            py: 1.25,
+            "&:last-child": { pb: 1.25 }, // MUI adds extra bottom padding by default
+          }}
+        >
+          <Stack spacing={0.25} sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 600 }}>{place.name}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {[
+                place.type.replaceAll("_", " "),
+                `★ ${place.rating}`,
+                place.price_range,
+                place.duration_minutes
+                  ? formatDuration(place.duration_minutes)
+                  : null,
+                place.city !== city
+                  ? `${place.city} (near ${city})`
+                  : place.city,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {hoursLabel(place, r.availability)}
+            </Typography>
+            {chips.length > 0 && (
+              <Typography variant="body2" color="text.secondary">
+                why: {chips.slice(0, MAX_CHIPS).map(reasonLabel).join(" · ")}
+              </Typography>
             )}
-          </span>
-        </div>
-        <div className="place-row__actions">
-          <button
-            type="button"
-            className={`button button--small${isMustSee ? " button--on" : ""}`}
-            aria-pressed={isMustSee}
-            aria-label={`Must-See: ${place.name}`}
-            title={
-              isMustSee ? "Must-See (always included)" : "Make it a Must-See"
-            }
-            onClick={() =>
-              dispatch({ type: "toggleMustSee", placeId: place.id })
-            }
-          >
-            ★
-          </button>
-          <button
-            type="button"
-            className="button button--small"
-            disabled={!day.plan}
-            aria-label={`Add ${place.name} to Day ${dayIndex + 1}`}
-            onClick={() => add(place)}
-          >
-            + Add
-          </button>
-        </div>
-      </li>
+            <Stack
+              direction="row"
+              spacing={0.5}
+              useFlexGap
+              sx={{ flexWrap: "wrap" }}
+            >
+              {r.onOtherDays.map((i) => (
+                <Chip
+                  key={i}
+                  size="small"
+                  color="warning"
+                  variant="outlined"
+                  label={`Already planned for Day ${i + 1} (${formatDate(trip.days[i].date)})`}
+                />
+              ))}
+              {r.points === null && (
+                <Chip size="small" variant="outlined" label="Rated under 4.0" />
+              )}
+            </Stack>
+          </Stack>
+          <Stack direction="row" spacing={0.75} sx={{ flexShrink: 0 }}>
+            {/* ToggleButton sets aria-pressed itself from `selected`. */}
+            <ToggleButton
+              value="must-see"
+              size="small"
+              color="primary"
+              selected={isMustSee}
+              aria-label={`Must-See: ${place.name}`}
+              title={
+                isMustSee ? "Must-See (always included)" : "Make it a Must-See"
+              }
+              onChange={() =>
+                dispatch({ type: "toggleMustSee", placeId: place.id })
+              }
+            >
+              ★
+            </ToggleButton>
+            <Button
+              variant="outlined"
+              size="small"
+              disabled={!day.plan}
+              aria-label={`Add ${place.name} to Day ${dayIndex + 1}`}
+              onClick={() => add(place)}
+            >
+              + Add
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
     );
   };
+
+  const rowList = (rows: ListRow[]) => (
+    <Stack component="ul" spacing={1} sx={{ listStyle: "none", m: 0, p: 0 }}>
+      {rows.map(row)}
+    </Stack>
+  );
 
   const scopeOptions: { value: ListScope; label: string }[] = [
     { value: "day", label: dayCity ? `${dayCity} (this day)` : "This day" },
@@ -150,152 +216,193 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
 
   return (
     <section className="place-list" aria-labelledby="place-list-title">
-      <h2 id="place-list-title" className="place-list__title">
+      <Typography
+        id="place-list-title"
+        component="h2"
+        variant="h6"
+        className="place-list__title"
+      >
         Add places
-      </h2>
+      </Typography>
 
-      <div className="place-list__filters">
-        <label className="control control--wide">
-          <span className="control__label">Search all places</span>
-          <input
-            id={PLACE_SEARCH_ID}
-            type="search"
-            value={filters.query}
-            placeholder="Name or city…"
-            onChange={(e) => update({ query: e.target.value })}
-          />
-        </label>
-        <label className="control">
-          <span className="control__label">Area</span>
-          <select
-            value={filters.scope}
-            onChange={(e) => update({ scope: e.target.value as ListScope })}
-          >
-            {scopeOptions.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="chip">
-          <input
-            type="checkbox"
-            checked={filters.openOnly}
-            onChange={() => update({ openOnly: !filters.openOnly })}
-          />
-          Open {formatDate(day.date)}
-        </label>
-      </div>
+      <Stack
+        direction="row"
+        spacing={1.5}
+        useFlexGap
+        sx={{ flexWrap: "wrap", alignItems: "center", mb: 1.25 }}
+      >
+        <TextField
+          id={PLACE_SEARCH_ID}
+          type="search"
+          size="small"
+          label="Search all places"
+          placeholder="Name or city…"
+          value={filters.query}
+          onChange={(e) => update({ query: e.target.value })}
+          sx={{ flex: "1 1 200px" }}
+        />
+        {/* Native select: works best with screen readers and phone keyboards. */}
+        <TextField
+          select
+          size="small"
+          label="Area"
+          value={filters.scope}
+          onChange={(e) => update({ scope: e.target.value as ListScope })}
+          slotProps={{ select: { native: true } }}
+        >
+          {scopeOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </TextField>
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={filters.openOnly}
+              onChange={() => update({ openOnly: !filters.openOnly })}
+            />
+          }
+          label={`Open ${formatDate(day.date)}`}
+        />
+      </Stack>
 
-      <div className="chips place-list__interests">
-        {INTERESTS.map((interest) => (
-          <label key={interest} className="chip">
-            <input
-              type="checkbox"
-              checked={filters.interests.includes(interest)}
-              onChange={() =>
+      <Stack
+        direction="row"
+        spacing={1}
+        useFlexGap
+        sx={{ flexWrap: "wrap", mb: 2 }}
+        role="group"
+        aria-label="Filter by interest"
+      >
+        {INTERESTS.map((interest) => {
+          const selected = filters.interests.includes(interest);
+          return (
+            <Chip
+              key={interest}
+              label={interestLabel(interest)}
+              color={selected ? "primary" : "default"}
+              variant={selected ? "filled" : "outlined"}
+              // MUI's Chip doesn't announce on/off, so say it explicitly.
+              aria-pressed={selected}
+              onClick={() =>
                 update({ interests: toggle(filters.interests, interest) })
               }
             />
-            {interestLabel(interest)}
-          </label>
-        ))}
-      </div>
+          );
+        })}
+      </Stack>
 
       <p className="visually-hidden" aria-live="polite">
         {announcement}
       </p>
 
       {singleGroup && total > 0 && (
-        <h3 className="group__title place-list__heading">
-          {groupTitle(singleGroup.group, trip.prefs.budget)}{" "}
-          <span className="group__count">{singleGroup.rows.length}</span>
-        </h3>
+        <Box className="place-list__heading">
+          <GroupHeading
+            title={groupTitle(singleGroup.group, trip.prefs.budget)}
+            count={singleGroup.rows.length}
+          />
+        </Box>
       )}
 
       {/* Only the results scroll; search and filters stay in view above them. */}
       <div className="place-list__results">
         {total === 0 ? (
-          <div className="empty">
-            <p>No places match.</p>
-            <div className="day__buttons">
+          <Box
+            sx={{
+              mt: 2,
+              p: 3,
+              border: 1,
+              borderStyle: "dashed",
+              borderColor: "divider",
+              borderRadius: 1,
+              textAlign: "center",
+            }}
+          >
+            <Typography sx={{ mb: 1 }}>No places match.</Typography>
+            <Stack
+              direction="row"
+              spacing={1}
+              useFlexGap
+              sx={{ flexWrap: "wrap", justifyContent: "center" }}
+            >
               {filters.query && (
-                <button
-                  type="button"
-                  className="button"
+                <Button
+                  variant="outlined"
                   onClick={() => update({ query: "" })}
                 >
                   Clear search
-                </button>
+                </Button>
               )}
               {filters.openOnly && (
-                <button
-                  type="button"
-                  className="button"
+                <Button
+                  variant="outlined"
                   onClick={() => update({ openOnly: false })}
                 >
                   Show closed
-                </button>
+                </Button>
               )}
               {filters.interests.length > 0 && (
-                <button
-                  type="button"
-                  className="button"
+                <Button
+                  variant="outlined"
                   onClick={() => update({ interests: [] })}
                 >
                   Any interest
-                </button>
+                </Button>
               )}
               {filters.scope !== "all" && (
-                <button
-                  type="button"
-                  className="button"
+                <Button
+                  variant="outlined"
                   onClick={() => update({ scope: "all" })}
                 >
                   All of Italy
-                </button>
+                </Button>
               )}
-            </div>
-          </div>
+            </Stack>
+          </Box>
         ) : (
           <>
             {list.groups.map(({ group, rows }) => {
               const title = groupTitle(group, trip.prefs.budget);
               const content =
                 rows.length > 0 ? (
-                  <ul className="place-rows">{rows.map(row)}</ul>
+                  rowList(rows)
                 ) : (
-                  <p className="field__hint">
+                  <Typography variant="body2" color="text.secondary">
                     {emptyGroupText(group, trip.prefs.budget)}
-                  </p>
+                  </Typography>
                 );
               if (singleGroup) return <div key={group}>{content}</div>;
               // "Other prices" starts collapsed, but is never hidden (design doc §3.7).
               return group === "other" ? (
-                <details key={group} className="group">
-                  <summary className="group__title">
-                    {title} <span className="group__count">{rows.length}</span>
-                  </summary>
-                  {content}
-                </details>
+                <Accordion
+                  key={group}
+                  disableGutters
+                  variant="outlined"
+                  sx={{ mb: 2 }}
+                >
+                  <AccordionSummary>
+                    <GroupHeading title={title} count={rows.length} />
+                  </AccordionSummary>
+                  <AccordionDetails>{content}</AccordionDetails>
+                </Accordion>
               ) : (
-                <section key={group} className="group">
-                  <h3 className="group__title">
-                    {title} <span className="group__count">{rows.length}</span>
-                  </h3>
+                <Box component="section" key={group} sx={{ mb: 2 }}>
+                  <GroupHeading title={title} count={rows.length} />
                   {content}
-                </section>
+                </Box>
               );
             })}
             {list.outside.length > 0 && (
-              <section className="group">
-                <h3 className="group__title">
-                  Outside your area{" "}
-                  <span className="group__count">{list.outside.length}</span>
-                </h3>
-                <ul className="place-rows">{list.outside.map(row)}</ul>
-              </section>
+              <Box component="section" sx={{ mb: 2 }}>
+                <GroupHeading
+                  title="Outside your area"
+                  count={list.outside.length}
+                />
+                {rowList(list.outside)}
+              </Box>
             )}
           </>
         )}
