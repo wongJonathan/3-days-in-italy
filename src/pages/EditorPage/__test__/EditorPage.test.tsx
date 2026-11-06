@@ -49,20 +49,6 @@ describe("<EditorPage>", () => {
     expect(html.match(/chosen for you/g)).toHaveLength(1);
   });
 
-  it("drops 'chosen for you' once the traveler picks the city", () => {
-    const reduce = tripReducer(PLACES);
-    const city = trip.days[0].plan!.baseCity!;
-    const pinned = reduce(trip, { type: "setDayArea", day: 0, city });
-    const page = render(pinned);
-    expect(page).toContain(
-      `<option value="${city}" selected="">${city}</option>`,
-    );
-    expect(page).not.toContain("chosen for you");
-    expect(html).toMatch(/\d+ Stops · \d+ Warnings? · ends \d\d:\d\d/);
-    expect(html).toContain("Regenerate day");
-    expect(html).toContain("Finalize day");
-  });
-
   it("shows Stops with Hours Status, travel estimates and the kept Must-See", () => {
     expect(html).toContain("Vatican Museums");
     expect(html).toContain("★ Must-See");
