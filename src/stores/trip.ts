@@ -287,11 +287,6 @@ export const scheduleTrip = (
 export const isTripFinalized = (trip: Trip): boolean =>
   trip.days.every((d) => d.status === "finalized");
 
-export const completesTrip = (trip: Trip, action: TripAction): boolean =>
-  action.type === "finalize" &&
-  trip.days[action.day]?.plan != null &&
-  trip.days.every((d, i) => i === action.day || d.status === "finalized");
-
 /** Must-Sees that no day's plan contains yet, so the editor can say so (never silently dropped). */
 export const unplannedMustSees = (trip: Trip): string[] => {
   const planned = new Set(

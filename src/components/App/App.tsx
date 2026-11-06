@@ -11,11 +11,7 @@ import {
 import { PLACES } from "../../utils/data/places.ts";
 import { todayInRome } from "../../utils/hours/calendar.ts";
 import { useTrip } from "../../stores/useTrip.ts";
-import {
-  completesTrip,
-  type Trip,
-  type TripAction,
-} from "../../stores/trip.ts";
+import type { Trip } from "../../stores/trip.ts";
 import { EditorPage } from "../../pages/EditorPage/EditorPage.tsx";
 import { NewTripDialog } from "../NewTripDialog/NewTripDialog.tsx";
 import { Notices } from "../Notices/Notices.tsx";
@@ -49,12 +45,6 @@ const App = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
-  /** Like dispatch, but the Finalize that signs off the last day opens the overview. */
-  const act = (action: TripAction) => {
-    if (trip && completesTrip(trip, action)) navigate(ROUTES.overview);
-    dispatch(action);
-  };
 
   const confirmReset = () => {
     setConfirmingReset(false);
@@ -104,7 +94,7 @@ const App = () => {
             <EditorPage
               trip={t}
               places={PLACES}
-              dispatch={act}
+              dispatch={dispatch}
               onReset={() => setConfirmingReset(true)}
               onViewTrip={() => navigate(ROUTES.overview)}
               notices={notices}
