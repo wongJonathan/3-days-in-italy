@@ -10,14 +10,21 @@ import {
 import { countLabel } from "../../utils/editor/copy.ts";
 import { tuneSummary } from "../../utils/onboarding/onboarding.ts";
 import type { ScheduledDay } from "../../utils/schedule/schedule.ts";
-import type { DayStatus, Trip } from "../../stores/trip.ts";
+import {
+  isTripFinalized,
+  type DayStatus,
+  type Trip,
+} from "../../stores/trip.ts";
 import { formatDate } from "../../utils/format.ts";
 
 type Props = {
   trip: Trip;
   schedules: (ScheduledDay | null)[];
   onOpen: (day: number) => void;
+  /** Asks to delete the Trip and start a new one (App confirms first). */
   onReset: () => void;
+  /** Opens the Trip Overview; only enabled once every day is finalized. */
+  onViewTrip: () => void;
 };
 
 /** Shape + word, not colour alone (WCAG 1.4.1): ○ draft, ▶ editing, ✓ finalized. */
@@ -27,9 +34,17 @@ const STATUS: Record<DayStatus, { icon: string; label: string }> = {
   finalized: { icon: "✓", label: "finalized" },
 };
 
+const VIEW_HINT_ID = "view-trip-hint";
+
 /** The whole Trip at a glance: one card per day (design doc §3.2). */
-export const TripPanel = ({ trip, schedules, onOpen, onReset }: Props) => {
-  const allFinalized = trip.days.every((d) => d.status === "finalized");
+export const TripPanel = ({
+  trip,
+  schedules,
+  onOpen,
+  onReset,
+  onViewTrip,
+}: Props) => {
+  const allFinalized = isTripFinalized(trip);
   const first = trip.days[0].date;
   const last = trip.days[trip.days.length - 1].date;
 
@@ -100,9 +115,23 @@ export const TripPanel = ({ trip, schedules, onOpen, onReset }: Props) => {
         })}
       </Box>
 
-      <Stack direction="row">
+      <Stack spacing={0.5} sx={{ alignItems: "flex-start" }}>
+        <Button
+          variant="outlined"
+          onClick={onViewTrip}
+          disabled={!allFinalized}
+          aria-describedby={allFinalized ? undefined : VIEW_HINT_ID}
+        >
+          View trip
+        </Button>
+        {/* A disabled button can't show a tooltip, so the hint is plain text. */}
+        {!allFinalized && (
+          <Typography id={VIEW_HINT_ID} variant="body2" color="text.secondary">
+            Finalize all {trip.days.length} days to view your trip.
+          </Typography>
+        )}
         <Button variant="text" onClick={onReset}>
-          Start over
+          Plan a new trip
         </Button>
       </Stack>
     </nav>

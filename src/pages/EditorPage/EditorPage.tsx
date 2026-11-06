@@ -1,17 +1,11 @@
-import {
-  lazy,
-  Suspense,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
+import { lazy, Suspense, useMemo, useState, type ReactNode } from "react";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import type { CleanPlace } from "../../utils/data/place.ts";
 import { countLabel } from "../../utils/editor/copy.ts";
 import { dayMapModel } from "../../utils/editor/map-model.ts";
-import { scheduleStops } from "../../utils/generator/generate-day.ts";
+import { useInBrowser } from "../../utils/browser.ts";
 import {
+  scheduleTrip,
   unplannedMustSees,
   type Trip,
   type TripAction,
@@ -29,9 +23,6 @@ import { TripPanel } from "../../components/TripPanel/TripPanel.tsx";
  */
 const DayMap = lazy(() => import("../../components/DayMap/DayMap.tsx"));
 
-/** Being in a browser never changes, so there is nothing to subscribe to. */
-const noSubscription = () => () => {};
-
 /** Narrow screens show one of these at a time (design doc §3.8). */
 type Tab = "schedule" | "map" | "add";
 
@@ -46,14 +37,15 @@ type Props = {
   places: CleanPlace[];
   dispatch: (action: TripAction) => void;
   onReset: () => void;
+  /** Opens the Trip Overview (enabled once every day is finalized). */
+  onViewTrip: () => void;
   /** App-wide banners (storage, removed Stops), shown above the Trip panel. */
   notices?: ReactNode;
 };
 
 /**
  * The editor: Trip panel | open day | map and Place list.
- * Schedules are recomputed from the Trip on every render. The scheduler is
- * pure and fast, so there is no stored copy of times that could go stale.
+ * Schedules are recomputed from the Trip on every render (see scheduleTrip).
  * On narrow screens, CSS shows one tab at a time plus a bottom action bar;
  * wide screens show every column and ignore the tab.
  */
@@ -62,22 +54,14 @@ export const EditorPage = ({
   places,
   dispatch,
   onReset,
+  onViewTrip,
   notices,
 }: Props) => {
   const placesById = useMemo(
     () => new Map(places.map((p) => [p.id, p])),
     [places],
   );
-  const schedules = trip.days.map((day) =>
-    day.plan
-      ? scheduleStops(day.plan.stops, {
-          date: day.date,
-          window: day.window,
-          mode: trip.prefs.mode,
-          placesById,
-        })
-      : null,
-  );
+  const schedules = scheduleTrip(trip, placesById);
   const [tab, setTab] = useState<Tab>("schedule");
   // The selected Stop card, per day. It lives here (not in DayView) so that
   // both the day (click, ↑ / ↓) and the Place list (Add) can set it.
@@ -86,14 +70,7 @@ export const EditorPage = ({
     placeId: string;
   } | null>(null);
 
-  // The map needs a real browser (Leaflet uses `window`). During server
-  // rendering (the Node smoke tests) the third function answers instead,
-  // so Leaflet is never loaded there.
-  const inBrowser = useSyncExternalStore(
-    noSubscription,
-    () => true,
-    () => false,
-  );
+  const inBrowser = useInBrowser();
 
   /** "Add places →" on an empty day: show the list and put the cursor in its search. */
   const goToPlaces = () => {
@@ -125,6 +102,7 @@ export const EditorPage = ({
           schedules={schedules}
           onOpen={(i) => dispatch({ type: "openDay", day: i })}
           onReset={onReset}
+          onViewTrip={onViewTrip}
         />
       </div>
 

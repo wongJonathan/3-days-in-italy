@@ -148,7 +148,7 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
         3 Days in Italy
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Plan three days from 100 hand-picked places. Only the date is needed.
+        Plan three days with over a 100 hand-picked places.
       </Typography>
 
       <Box component="section" sx={{ mb: 3 }}>

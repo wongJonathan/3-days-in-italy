@@ -14,6 +14,7 @@ const render = (trip: Trip) =>
       places={PLACES}
       dispatch={() => {}}
       onReset={() => {}}
+      onViewTrip={() => {}}
     />,
   );
 
@@ -35,6 +36,21 @@ describe("<EditorPage>", () => {
     expect(html).toContain("Day 3 · Sun 8 Nov");
     expect(html).toContain("editing");
     expect(html).toContain("Not planned yet");
+  });
+
+  it("keeps View trip disabled, with a hint, until every day is finalized", () => {
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>View trip/);
+    expect(html).toContain("Finalize all 3 days to view your trip.");
+    expect(html).toContain("Plan a new trip");
+    expect(html).not.toContain("Start over");
+
+    const reduce = tripReducer(PLACES);
+    const done = [0, 1, 2]
+      .map((day) => ({ type: "finalize", day }) as const)
+      .reduce(reduce, trip);
+    const finished = render(done);
+    expect(finished).not.toMatch(/<button[^>]*disabled=""[^>]*>View trip/);
+    expect(finished).not.toContain("Finalize all 3 days");
   });
 
   it("shows the open day's header and actions", () => {
