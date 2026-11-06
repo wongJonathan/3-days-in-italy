@@ -3,18 +3,38 @@ import { PLACES } from "./data/places.ts";
 import { todayInRome } from "./hours/calendar.ts";
 import { useTrip } from "./trip/useTrip.ts";
 import { Editor } from "./ui/Editor.tsx";
+import { Notices } from "./ui/Notices.tsx";
 import { Onboarding } from "./ui/Onboarding.tsx";
 
 /** A saved Trip opens straight away in the editor; otherwise onboarding. */
 const App = () => {
-  const { trip, dispatch, start, reset } = useTrip(PLACES);
+  const { trip, dispatch, start, reset, canSave, removedStops } =
+    useTrip(PLACES);
   // Today in Italy, read once: Start Dates before it are blocked.
   const [today] = useState(() => todayInRome(new Date()));
+  const [removedDismissed, setRemovedDismissed] = useState(false);
+
+  const notices = (
+    <Notices
+      canSave={canSave}
+      removedStops={removedDismissed ? 0 : removedStops}
+      onDismissRemoved={() => setRemovedDismissed(true)}
+    />
+  );
 
   return trip ? (
-    <Editor trip={trip} places={PLACES} dispatch={dispatch} onReset={reset} />
+    <Editor
+      trip={trip}
+      places={PLACES}
+      dispatch={dispatch}
+      onReset={reset}
+      notices={notices}
+    />
   ) : (
-    <Onboarding places={PLACES} today={today} onStart={start} />
+    <>
+      <div className="onboarding__notices">{notices}</div>
+      <Onboarding places={PLACES} today={today} onStart={start} />
+    </>
   );
 };
 

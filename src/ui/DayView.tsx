@@ -18,6 +18,8 @@ type Props = {
   placesById: Map<string, CleanPlace>;
   unplanned: string[];
   dispatch: (action: TripAction) => void;
+  /** Shows the Place list and focuses its search (empty-day state). */
+  onAddPlaces: () => void;
 };
 
 /** The open day: a header with every control, then the timed schedule (design doc §3.2). */
@@ -28,6 +30,7 @@ export const DayView = ({
   placesById,
   unplanned,
   dispatch,
+  onAddPlaces,
 }: Props) => {
   const day = trip.days[index];
   const plan = day.plan;
@@ -177,10 +180,20 @@ export const DayView = ({
 
         {plan.stops.length === 0 ? (
           <div className="empty">
-            <p>No Stops yet.</p>
-            <p className="field__hint">
-              Press “Suggest this day”, or add places from the list.
-            </p>
+            <p>Day {index + 1} has no Stops yet.</p>
+            {/* Two equal choices (design doc §3.9). */}
+            <div className="day__buttons empty__actions">
+              <button
+                type="button"
+                className="button"
+                onClick={() => dispatch({ type: "regenerate", day: index })}
+              >
+                ↻ Suggest this day
+              </button>
+              <button type="button" className="button" onClick={onAddPlaces}>
+                Add places →
+              </button>
+            </div>
           </div>
         ) : (
           <ol className="stops">

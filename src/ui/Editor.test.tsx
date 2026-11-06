@@ -137,3 +137,30 @@ describe("<Editor> Place list heading", () => {
     expect(heading).toBeLessThan(results);
   });
 });
+
+describe("<Editor> narrow-screen parts", () => {
+  const html = render(trip);
+
+  it("has Schedule / Map / Add tabs, with Schedule shown first", () => {
+    expect(html).toContain('data-tab="schedule"');
+    expect(html).toMatch(/aria-pressed="true"[^>]*>Schedule</);
+    expect(html).toContain(">Map<");
+    expect(html).toContain(">Add<");
+  });
+
+  it("has a bottom bar with the Warning count, Regenerate and Finalize", () => {
+    expect(html).toContain('class="mobile-bar"');
+    expect(html).toContain("✓ Finalize");
+  });
+
+  it("offers two choices on an empty day", () => {
+    const empty = createTrip(
+      { startDate: "2026-11-06", prefs: DEFAULT_PREFERENCES, startEmpty: true },
+      PLACES,
+    );
+    const page = render(empty);
+    expect(page).toContain("Day 1 has no Stops yet.");
+    expect(page).toContain("Suggest this day");
+    expect(page).toContain("Add places →");
+  });
+});

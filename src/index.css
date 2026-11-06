@@ -142,7 +142,6 @@ input[type="date"],
 
 .tune > summary {
   cursor: pointer;
-  list-style-position: outside;
 }
 
 .tune > summary .field__label {
@@ -311,7 +310,7 @@ input[type="date"],
     height: calc(100dvh - 32px); /* dvh: excludes mobile browser toolbars */
   }
 
-  .trip-panel {
+  .editor__left {
     overflow-y: auto;
     min-height: 0; /* lets a grid item shrink, so it can scroll */
     padding-right: 4px; /* keeps the scrollbar off the content */
@@ -733,7 +732,7 @@ details.group > summary {
 @media (min-width: 1024px) {
   /* In the side column: map on top (fixed share), the Place list fills the rest. */
   .map {
-    flex: 0 0 38%;
+    flex: 0 0 25%;
     height: auto;
     min-height: 200px;
   }
@@ -778,4 +777,98 @@ details.group > summary {
   z-index: 1;
   padding: 4px 0;
   background: var(--surface);
+}
+
+/* ---------- Narrow screens: tabs and a bottom bar (design doc §3.8) ---------- */
+
+.onboarding__notices {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.banner--notice {
+  margin: 0 0 12px;
+}
+
+.empty__actions {
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* Tabs and the bottom bar only exist below 1024 px; wide screens show every column. */
+.editor__tabs,
+.mobile-bar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  /* The 3 day cards sit side by side, so the Trip panel stays short. */
+  .day-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .editor__tabs {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-alt);
+  }
+
+  .editor__tab {
+    flex: 1;
+    min-height: 44px; /* touch target */
+    font: inherit;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+  }
+
+  .editor__tab[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+  }
+
+  /* One tab at a time. */
+  .editor[data-tab="schedule"] .editor__side,
+  .editor[data-tab="map"] .day,
+  .editor[data-tab="map"] .place-list,
+  .editor[data-tab="add"] .day,
+  .editor[data-tab="add"] .map {
+    display: none;
+  }
+
+  .editor[data-tab="map"] .map {
+    height: 65vh;
+  }
+
+  /* The bottom bar replaces the header's Regenerate / Finalize buttons. */
+  .day__header .day__buttons {
+    display: none;
+  }
+
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    padding: 10px 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .mobile-bar__warnings {
+    flex: 1;
+    color: var(--warning-text);
+    font-weight: 600;
+  }
 }

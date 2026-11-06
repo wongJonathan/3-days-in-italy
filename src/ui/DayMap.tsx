@@ -48,6 +48,21 @@ const FocusView = ({ focus }: { focus: MapFocus }) => {
   return null;
 };
 
+/**
+ * Leaflet measures its box once. On narrow screens the map can start inside a
+ * hidden tab (0 × 0), so it redraws whenever its box changes size, e.g. when
+ * the Map tab is shown or the window is resized.
+ */
+const ResizeWatcher = () => {
+  const map = useMap();
+  useEffect(() => {
+    const observer = new ResizeObserver(() => map.invalidateSize());
+    observer.observe(map.getContainer());
+    return () => observer.disconnect();
+  }, [map]);
+  return null;
+};
+
 type Props = { model: MapModel; label: string };
 
 /** The open day on a map: numbered pins and dashed straight lines (design doc §3.2). */
@@ -81,6 +96,7 @@ const DayMap = ({ model, label }: Props) => (
         </Marker>
       ))}
       <FocusView focus={model.focus} />
+      <ResizeWatcher />
     </MapContainer>
   </div>
 );

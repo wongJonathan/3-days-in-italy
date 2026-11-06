@@ -28,6 +28,9 @@ type Props = {
 
 const MAX_CHIPS = 3;
 
+/** The search box id, so "Add places →" on an empty day can focus it. */
+export const PLACE_SEARCH_ID = "place-search";
+
 const toggle = <T,>(items: T[], item: T): T[] =>
   items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
 
@@ -155,6 +158,7 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
         <label className="control control--wide">
           <span className="control__label">Search all places</span>
           <input
+            id={PLACE_SEARCH_ID}
             type="search"
             value={filters.query}
             placeholder="Name or city…"

@@ -104,7 +104,7 @@ Steps 1–7 are pure logic, built test-first with Vitest.
 - **Hours Status is visible** on every Place in lists and on every Stop.
 - **Generation works with no Preferences**: a Start Date alone produces a full Trip Day.
 - **No refresh loses work**: reloading the page restores the Trip exactly.
-- **Runs for free**: the live site works on Firebase's free plan with no external calls.
+- **Runs for free**: the live site works on Firebase's free plan with no paid or keyed external services. The only network requests are free OpenStreetMap map tiles; everything else, including the data, is bundled into the app.
 
 ## After the MVP (priority order)
 
