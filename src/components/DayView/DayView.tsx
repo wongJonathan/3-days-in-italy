@@ -1,6 +1,5 @@
-// The day view, built with MUI components. The layout classes (day,
-// day__header, day__body, day__buttons, connector) are kept so the column
-// scrolling and narrow-screen rules still apply.
+// The layout classes (day, day__header, day__body, day__buttons, connector)
+// are kept so the column scrolling and narrow-screen rules in index.css apply.
 import {
   Alert,
   Box,
@@ -68,7 +67,6 @@ export const DayView = ({
   selectedId,
   onSelect,
 }: Props) => {
-  // Hooks must run on every render, so this sits before the early return.
   const [lastMove, setLastMove] = useState<LastMove | null>(null);
 
   const day = trip.days[index];
@@ -110,7 +108,6 @@ export const DayView = ({
     dispatch({ type: "moveStop", day: index, from, to });
   };
 
-  /** Only the card just moved on this day gets refocused. */
   const refocusFor = (placeId: string) =>
     lastMove?.dayIndex === index && lastMove.placeId === placeId
       ? { direction: lastMove.direction, token: lastMove.token }

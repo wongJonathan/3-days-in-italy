@@ -25,14 +25,12 @@ export type CityCount = { total: number; open: number; towns: string[] };
 
 const TRIP_LENGTH = 3;
 
-/** The 3 dates of a Trip starting on `start`. */
 export const tripDates = (start: IsoDate): IsoDate[] =>
   Array.from({ length: TRIP_LENGTH }, (_, i) => addDays(start, i));
 
 const availability = (place: CleanPlace, date: IsoDate) =>
   availabilityOn(place, rulesFor(place.id), date);
 
-/** Names, most notable (highest rated) first. */
 const namesByRating = (places: CleanPlace[]): string[] =>
   [...places]
     .sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name))

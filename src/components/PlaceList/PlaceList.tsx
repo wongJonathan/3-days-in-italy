@@ -1,4 +1,3 @@
-// The Place list, built with MUI. Its logic lives in utils/editor/place-list.ts.
 import {
   Accordion,
   AccordionDetails,

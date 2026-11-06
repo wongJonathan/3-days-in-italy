@@ -1,7 +1,6 @@
 import type { PlannedDay } from "../utils/generator/generate-day.ts";
 import type { Trip } from "./trip.ts";
 
-/** The localStorage key the Trip is saved under. */
 export const STORAGE_KEY = "3-days-in-italy:trip";
 
 export type LoadedTrip = {

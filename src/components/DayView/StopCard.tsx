@@ -1,4 +1,3 @@
-// The Stop card, built with MUI components.
 import {
   Alert,
   Box,
@@ -56,7 +55,6 @@ export type Refocus = { direction: "up" | "down"; token: number };
 
 const MAX_CHIPS = 3;
 
-/** True when the traveler asked their system for less motion. */
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

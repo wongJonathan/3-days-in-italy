@@ -33,7 +33,6 @@ export const seasonalHours = (
   rules: SeasonalRule[],
   date: IsoDate,
 ): string | null => {
-  // The "r is HoursRule" part tells TypeScript the found rule has `hours`.
   const override = rules.find(
     (r): r is HoursRule =>
       r.kind === "hours-in-months" && inMonths(r.from, r.to, date),

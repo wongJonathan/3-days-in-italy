@@ -105,7 +105,6 @@ export const tripReducer = (places: CleanPlace[]) => {
     placesById,
   });
 
-  /** Plans day `index` with the generator, keeping `kept` Stops. */
   const generate = (trip: Trip, index: number, kept: PlannedStop[]) => {
     const day = trip.days[index];
     return generateDay({

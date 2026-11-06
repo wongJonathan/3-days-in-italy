@@ -16,7 +16,6 @@ export const TOURIST_HEAVY_PENALTY = -12;
 
 export type ScoredPlaceInput = Pick<CleanPlace, "id" | "rating" | "tags">;
 
-/** The parts of the Preferences that scoring uses. */
 export type ScoringPreferences = { interests: Interest[]; mustSees: string[] };
 
 /**

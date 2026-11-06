@@ -64,7 +64,6 @@ export type ScheduledStop = {
   placeId: string;
   /** Travel from the previous Stop; null for the first Stop. */
   travel: TravelTime | null;
-  /** When the traveler gets there. */
   arrive: number;
   /** When the visit starts: later than `arrive` if the Place opens later. */
   start: number;
@@ -142,7 +141,6 @@ export const scheduleDay = ({
   };
 };
 
-/** Opening windows in time order. */
 const openRanges = (availability: DayAvailability): OpenRange[] =>
   availability.kind === "open"
     ? [...availability.ranges].sort((a, b) => a.open - b.open)

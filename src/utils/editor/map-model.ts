@@ -11,7 +11,6 @@ export type MapMarker = {
   number: number;
   name: string;
   position: LatLng;
-  /** The Stop has a Warning, so the pin is marked too. */
   hasWarning: boolean;
 };
 

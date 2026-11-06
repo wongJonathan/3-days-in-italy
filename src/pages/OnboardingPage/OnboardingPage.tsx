@@ -1,4 +1,3 @@
-// The onboarding screen, built with MUI. Its logic lives in onboarding.ts.
 import {
   Accordion,
   AccordionDetails,
@@ -85,7 +84,6 @@ const SEGMENTED = {
   },
 } as const;
 
-/** Adds `item` if missing, removes it if present. */
 const toggle = <T,>(items: T[], item: T): T[] =>
   items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
 

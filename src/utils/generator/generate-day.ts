@@ -30,7 +30,6 @@ export type Meal = "lunch" | "dinner";
 export type PlannedStop = {
   placeId: string;
   origin: StopOrigin;
-  /** Set when the Stop covers a meal. */
   meal: Meal | null;
 };
 
@@ -50,7 +49,6 @@ export const MEAL_WINDOWS: Record<Meal, { from: number; latestStart: number }> =
     dinner: { from: 19 * 60, latestStart: 21 * 60 },
   };
 
-/** Place types that can be a Meal Stop. */
 export const MEAL_TYPES = ["restaurant", "cafe"];
 
 export type GenerateDayInput = {
@@ -221,7 +219,6 @@ export type DayContext = {
   placesById: Map<string, CleanPlace>;
 };
 
-/** Schedules planned Stops (Meal Stops wait for their meal window). */
 export const scheduleStops = (
   stops: PlannedStop[],
   { date, window, mode, placesById }: DayContext,
@@ -294,7 +291,6 @@ const mealsOnTime = (stops: PlannedStop[], schedule: ScheduledDay): boolean =>
       schedule.stops[i].start <= MEAL_WINDOWS[s.meal].latestStart,
   );
 
-/** The latest planned day before `date`, if any. */
 const previousDayBefore = (
   days: PlannedDay[],
   date: IsoDate,

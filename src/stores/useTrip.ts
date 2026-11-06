@@ -31,7 +31,6 @@ const browserStorage = (): Storage | undefined => {
 export const useTrip = (places: CleanPlace[]) => {
   const reduce = useMemo(() => tripReducer(places), [places]);
 
-  // Read once, on first render (lazy useState initialisers).
   const [storage] = useState(() => {
     const s = browserStorage();
     return canUseStorage(s) ? s : undefined;
@@ -46,7 +45,6 @@ export const useTrip = (places: CleanPlace[]) => {
   );
   const [trip, setTrip] = useState<Trip | null>(loaded?.trip ?? null);
 
-  // Autosave: every change to the Trip is written straight away.
   useEffect(() => {
     if (!storage) return;
     if (trip) storage.setItem(STORAGE_KEY, serializeTrip(trip));
@@ -55,7 +53,6 @@ export const useTrip = (places: CleanPlace[]) => {
 
   return {
     trip,
-    /** Applies an editor action to the current Trip. */
     dispatch: (action: TripAction) =>
       setTrip((current) => (current ? reduce(current, action) : current)),
     start: (newTrip: NewTrip) => setTrip(createTrip(newTrip, places)),

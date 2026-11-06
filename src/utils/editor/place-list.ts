@@ -43,7 +43,6 @@ export type ListRow = {
   /** Score points, or null when the Place is rated under 4.0 (still listed). */
   points: number | null;
   reasons: Reason[];
-  /** Availability on the open day's date. */
   availability: DayAvailability;
   /** Indexes of other days that already have this Place. */
   onOtherDays: number[];
@@ -60,7 +59,6 @@ export type PlaceList = {
   outside: ListRow[];
 };
 
-/** The cities a scope covers, or null for all of Italy. */
 const scopeCitiesFor = (
   trip: Trip,
   dayIndex: number,

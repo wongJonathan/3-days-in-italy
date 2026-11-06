@@ -283,7 +283,6 @@ export const corrections: Correction[] = [
   ...assumedDurations(),
 ];
 
-/** Places dropped from the clean dataset entirely. */
 export const removals: Removal[] = [
   {
     placeId: "place_079",

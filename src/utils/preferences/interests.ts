@@ -39,6 +39,5 @@ export const INTERESTS: Interest[] = [
   "avoid-crowds",
 ];
 
-/** The chip's label, e.g. "Hidden Gem" or "Avoid Crowds". */
 export const interestLabel = (interest: Interest): string =>
   interest === "avoid-crowds" ? "Avoid Crowds" : INTEREST_TAGS[interest].label;

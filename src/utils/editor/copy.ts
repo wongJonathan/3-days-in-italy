@@ -34,7 +34,6 @@ export const travelLabel = ({ band, minutes, mode }: TravelTime): string => {
   return `${how} ~${formatDuration(minutes)} (est.)`;
 };
 
-/** "January" … "December" for month numbers 1–12. */
 const monthName = (month: number): string =>
   formatMonth(`2026-${String(month).padStart(2, "0")}-01`);
 
