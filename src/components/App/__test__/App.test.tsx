@@ -22,8 +22,8 @@ describe("<App>", () => {
   const html = renderAt("/");
 
   it("starts on onboarding when no Trip is saved", () => {
-    expect(html).toContain("3 Days in Italy");
-    expect(html).toContain("Plan my trip");
+    expect(html).toContain("Make the most of three days in Italy");
+    expect(html).toContain("Create my trip");
   });
 
   it("puts every colour token on :root as a CSS variable", () => {

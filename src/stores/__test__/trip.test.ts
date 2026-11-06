@@ -90,7 +90,7 @@ describe("createTrip", () => {
     expect(trip.days[2]).toMatchObject({ status: "draft", plan: null });
   });
 
-  it("opens an empty Day 1 for 'Start with empty days'", () => {
+  it("opens an empty Day 1 for 'Plan my own trip'", () => {
     const trip = newTrip({ startEmpty: true });
     expect(trip.days[0].status).toBe("editing");
     expect(trip.days[0].plan).toMatchObject({ stops: [], baseCity: null });

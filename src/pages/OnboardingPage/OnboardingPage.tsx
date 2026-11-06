@@ -21,6 +21,7 @@ import type { CleanPlace } from "../../utils/data/place.ts";
 import type { IsoDate } from "../../utils/hours/calendar.ts";
 import {
   cityCounts,
+  cityLine,
   headsUps,
   headsUpText,
   isPastDate,
@@ -85,7 +86,7 @@ const SEGMENTED = {
   },
 } as const;
 
-/** A labelled group of settings inside "Tune it". */
+/** A labelled group of settings inside "Make it yours". */
 const Setting = ({
   label,
   hint,
@@ -110,7 +111,7 @@ const Setting = ({
 
 /**
  * The one-screen onboarding from the design doc (§4.2): Start Date with
- * heads-ups, an optional "Where", and a collapsed "Tune it". Only the date is
+ * heads-ups, an optional "Where", and a collapsed "Make it yours". Only the date is
  * required; everything else has a default.
  */
 export const OnboardingPage = ({ places, today, onStart }: Props) => {
@@ -144,11 +145,11 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
 
   return (
     <main className="onboarding">
-      <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
-        3 Days in Italy
+      <Typography component="h1" variant="h4">
+        Make the most of three days in Italy
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Plan three days with over a 100 hand-picked places.
+        We'll plan the days around what's open, what's close, and what you love!
       </Typography>
 
       <Box component="section" sx={{ mb: 3 }}>
@@ -174,21 +175,31 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
                 {tripDates(startDate).map(formatDate).join(" · ")}
               </Typography>
               {notes.length > 0 && (
-                <Box
-                  component="ul"
-                  sx={{
-                    m: 0,
-                    pl: 2.5,
-                    color: "text.secondary",
-                    fontSize: "0.9375rem",
-                  }}
-                >
-                  {notes.map((note) => (
-                    <li key={`${note.kind}-${note.date}`}>
-                      {headsUpText(note)}
-                    </li>
-                  ))}
-                </Box>
+                <>
+                  <Typography
+                    id="good-to-know"
+                    variant="body2"
+                    sx={{ fontWeight: 600, mt: 1 }}
+                  >
+                    Good to know
+                  </Typography>
+                  <Box
+                    component="ul"
+                    aria-labelledby="good-to-know"
+                    sx={{
+                      m: 0,
+                      pl: 2.5,
+                      color: "text.secondary",
+                      fontSize: "0.9375rem",
+                    }}
+                  >
+                    {notes.map((note) => (
+                      <li key={`${note.kind}-${note.date}`}>
+                        {headsUpText(note)}
+                      </li>
+                    ))}
+                  </Box>
+                </>
               )}
             </>
           )}
@@ -197,9 +208,9 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
 
       <Box component="fieldset" sx={{ border: 0, p: 0, m: 0, mb: 3 }}>
         <Typography component="legend" sx={{ fontWeight: 600, mb: 0.75 }}>
-          Where?{" "}
+          Where would you like to go?{" "}
           <Typography component="span" variant="body2" color="text.secondary">
-            Optional: leave empty and we'll choose
+            Optional
           </Typography>
         </Typography>
         <FormGroup sx={{ gap: 1 }}>
@@ -231,10 +242,14 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
                       <Typography component="span" sx={{ fontWeight: 600 }}>
                         {city}
                       </Typography>
+                      {counts && counts[city].highlights.length > 0 && (
+                        <Typography variant="body2">
+                          {counts[city].highlights.join(", ")}
+                        </Typography>
+                      )}
                       {counts && (
                         <Typography variant="body2" color="text.secondary">
-                          {counts[city].open} of {counts[city].total} open on
-                          your dates
+                          {cityLine(counts[city])}
                         </Typography>
                       )}
                       {counts && counts[city].towns.length > 0 && (
@@ -255,7 +270,7 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
         <AccordionSummary>
           <Box>
             <Typography sx={{ fontWeight: 600 }}>
-              Tune it{" "}
+              Make it yours{" "}
               <Typography
                 component="span"
                 variant="body2"
@@ -421,14 +436,14 @@ export const OnboardingPage = ({ places, today, onStart }: Props) => {
           disabled={!validDate}
           onClick={() => start(false)}
         >
-          Plan my trip
+          Create my trip
         </Button>
         <Button
           variant="text"
           disabled={!validDate}
           onClick={() => start(true)}
         >
-          Start with empty days →
+          Plan my own trip →
         </Button>
       </div>
     </main>

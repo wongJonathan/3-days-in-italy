@@ -9,7 +9,8 @@
 export const COLORS = {
   text: "#1f2328",
   muted: "#59636e",
-  border: "#d1d9e0",
+  border: "#e4ddd2", // warm grey, to sit on --page
+  page: "#faf7f2", // warm off-white page background; cards stay --surface
   surface: "#ffffff",
   surfaceAlt: "#f6f8fa",
   accent: "#0b6b4f", // Italian green, readable on white (WCAG AA)

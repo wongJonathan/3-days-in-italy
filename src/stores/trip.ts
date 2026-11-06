@@ -41,7 +41,7 @@ export type Trip = {
   version: 1;
   startDate: IsoDate;
   prefs: Preferences;
-  /** True when the traveler chose "Start with empty days". */
+  /** True when the traveler chose "Plan my own trip". */
   startEmpty: boolean;
   days: TripDay[];
   /** Index of the day shown in the editor. */
@@ -68,7 +68,7 @@ export type NewTrip = {
 
 export const TRIP_LENGTH = 3;
 
-/** A new Trip with Day 1 open (planned, or empty for "Start with empty days"). */
+/** A new Trip with Day 1 open (planned, or empty for "Plan my own trip"). */
 export const createTrip = (
   { startDate, prefs, startEmpty }: NewTrip,
   places: CleanPlace[],

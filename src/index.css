@@ -17,7 +17,7 @@
     sans-serif;
   line-height: 1.5;
   color: var(--text);
-  background: var(--surface);
+  background: var(--page);
 }
 
 body {
@@ -62,7 +62,7 @@ body {
     bottom: 0;
     z-index: 2;
     padding: 12px 0;
-    background: var(--surface);
+    background: var(--page);
     border-top: 1px solid var(--border);
   }
 }

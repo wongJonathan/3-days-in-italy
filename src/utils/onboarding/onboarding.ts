@@ -21,7 +21,19 @@ export type HeadsUp =
   | { kind: "weekday"; date: IsoDate; names: string[] }
   | { kind: "season"; date: IsoDate; names: string[] };
 
-export type CityCount = { total: number; open: number; towns: string[] };
+/**
+ * A Base City on the date picker's dates: how many Places it has, how many are
+ * open on at least one Trip date, its day-trip towns, and its best-rated open
+ * Places (short names) to show off on the city card.
+ */
+export type CityCount = {
+  total: number;
+  open: number;
+  towns: string[];
+  highlights: string[];
+};
+
+const HIGHLIGHTS = 3;
 
 const TRIP_LENGTH = 3;
 
@@ -30,6 +42,12 @@ export const tripDates = (start: IsoDate): IsoDate[] =>
 
 const availability = (place: CleanPlace, date: IsoDate) =>
   availabilityOn(place, rulesFor(place.id), date);
+
+/**
+ * A Place's name without the town after a comma ("Cheese and Prosciutto Tour,
+ * Parma" → "Cheese and Prosciutto Tour"), so it reads well inside a list.
+ */
+export const shortName = (name: string): string => name.split(", ")[0];
 
 const namesByRating = (places: CleanPlace[]): string[] =>
   [...places]
@@ -63,7 +81,7 @@ export const headsUps = (places: CleanPlace[], start: IsoDate): HeadsUp[] => {
   return [...weekday, ...season];
 };
 
-/** Per Base City: how many Places, how many open on at least one Trip date, and its towns. */
+/** Per Base City: its Place counts, towns and highlights (see CityCount). */
 export const cityCounts = (
   places: CleanPlace[],
   start: IsoDate,
@@ -72,22 +90,45 @@ export const cityCounts = (
   const counts = Object.fromEntries(
     BASE_CITY_NAMES.map((city): [BaseCity, CityCount] => [
       city,
-      { total: 0, open: 0, towns: [] },
+      { total: 0, open: 0, towns: [], highlights: [] },
     ]),
   ) as Record<BaseCity, CityCount>;
+  const openPlaces = Object.fromEntries(
+    BASE_CITY_NAMES.map((city): [BaseCity, CleanPlace[]] => [city, []]),
+  ) as Record<BaseCity, CleanPlace[]>;
 
   places.forEach((place) => {
-    const count = counts[baseCityOf(place)];
+    const city = baseCityOf(place);
+    const count = counts[city];
     count.total++;
     if (dates.some((date) => availability(place, date).kind !== "closed")) {
       count.open++;
+      openPlaces[city].push(place);
     }
-    const isTown = place.city !== baseCityOf(place);
+    const isTown = place.city !== city;
     if (isTown && !count.towns.includes(place.city)) {
       count.towns.push(place.city);
     }
   });
+
+  BASE_CITY_NAMES.forEach((city) => {
+    counts[city].highlights = namesByRating(openPlaces[city])
+      .slice(0, HIGHLIGHTS)
+      .map(shortName);
+  });
   return counts;
+};
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+/**
+ * The count line on a city card: "15 places to choose from · 3 closed on your
+ * dates". Closures are mentioned only when there are some.
+ */
+export const cityLine = ({ total, open }: CityCount): string => {
+  const closed = total - open;
+  const choose = `${plural(open, "place")} to choose from`;
+  return closed > 0 ? `${choose} · ${closed} closed on your dates` : choose;
 };
 
 /** True when `date` is before today (in Rome). ISO dates sort as text. */
@@ -105,7 +146,7 @@ const MODE_LABELS: Record<Preferences["mode"], string> = {
   "rental-car": "Rental car",
 };
 
-/** The collapsed "Tune it" line, so the traveler sees what was assumed. */
+/** The collapsed "Make it yours" line, so the traveler sees what was assumed. */
 export const tuneSummary = (prefs: Preferences): string => {
   const meals =
     prefs.lunch && prefs.dinner
@@ -131,19 +172,19 @@ export const tuneSummary = (prefs: Preferences): string => {
 };
 
 /**
- * One sentence per heads-up, naming the most notable Places:
- * "Sunday: Vatican Museums and 15 other places are closed."
+ * One sentence per heads-up, the count first, then the most notable Places
+ * (short names, so a comma in a name doesn't read as a list):
+ * "Sunday: 16 places are closed, including Vatican Museums."
  * "November: Lake Como, Chianti and 3 more are out of season."
  */
-export const headsUpText = ({ kind, date, names }: HeadsUp): string => {
+export const headsUpText = (headsUp: HeadsUp): string => {
+  const { kind, date } = headsUp;
+  const names = headsUp.names.map(shortName);
   const [first, second, ...rest] = names;
   if (kind === "weekday") {
-    const others = names.length - 1;
-    const subject =
-      others === 0
-        ? `${first} is`
-        : `${first} and ${others} other place${others === 1 ? "" : "s"} are`;
-    return `${formatWeekday(date)}: ${subject} closed.`;
+    return names.length === 1
+      ? `${formatWeekday(date)}: ${first} is closed.`
+      : `${formatWeekday(date)}: ${names.length} places are closed, including ${first}.`;
   }
   const subject =
     names.length === 1

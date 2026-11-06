@@ -3,9 +3,11 @@ import type { CleanPlace } from "../data/place.ts";
 import { DEFAULT_PREFERENCES } from "../preferences/preferences.ts";
 import {
   cityCounts,
+  cityLine,
   headsUps,
   headsUpText,
   isPastDate,
+  shortName,
   tripDates,
   tuneSummary,
 } from "./onboarding.ts";
@@ -98,9 +100,63 @@ describe("cityCounts", () => {
       place("siena", { city: "Siena", latitude: 43.3186, longitude: 11.3307 }),
     ];
     const counts = cityCounts(places, START);
-    expect(counts.Rome).toEqual({ total: 3, open: 2, towns: [] });
-    expect(counts.Florence).toEqual({ total: 1, open: 1, towns: ["Siena"] });
-    expect(counts.Milan).toEqual({ total: 0, open: 0, towns: [] });
+    expect(counts.Rome).toMatchObject({ total: 3, open: 2, towns: [] });
+    expect(counts.Florence).toMatchObject({
+      total: 1,
+      open: 1,
+      towns: ["Siena"],
+    });
+    expect(counts.Milan).toEqual({
+      total: 0,
+      open: 0,
+      towns: [],
+      highlights: [],
+    });
+  });
+
+  it("highlights the 3 best-rated Places open on the Trip, by short name", () => {
+    const places = [
+      place("low", { name: "Low", rating: 4.0 }),
+      place("top", { name: "Top Spot, Rome", rating: 4.9 }),
+      place("closed", {
+        name: "Closed Gem",
+        rating: 5,
+        hours: "Mon-Thu 9:00-18:00",
+      }),
+      place("mid", { name: "Mid", rating: 4.5 }),
+      place("high", { name: "High", rating: 4.7 }),
+    ];
+    expect(cityCounts(places, START).Rome.highlights).toEqual([
+      "Top Spot",
+      "High",
+      "Mid",
+    ]);
+  });
+});
+
+describe("cityLine", () => {
+  const count = { total: 30, open: 30, towns: [], highlights: [] };
+
+  it("counts the Places to choose from", () => {
+    expect(cityLine(count)).toBe("30 places to choose from");
+    expect(cityLine({ ...count, total: 1, open: 1 })).toBe(
+      "1 place to choose from",
+    );
+  });
+
+  it("adds the closures only when some are closed", () => {
+    expect(cityLine({ ...count, total: 18, open: 15 })).toBe(
+      "15 places to choose from · 3 closed on your dates",
+    );
+  });
+});
+
+describe("shortName", () => {
+  it("drops the town after a comma, so names read well in a list", () => {
+    expect(shortName("Cheese and Prosciutto Tour, Parma")).toBe(
+      "Cheese and Prosciutto Tour",
+    );
+    expect(shortName("Colosseum")).toBe("Colosseum");
   });
 });
 
@@ -138,14 +194,33 @@ describe("tuneSummary", () => {
 });
 
 describe("headsUpText", () => {
-  it("names the top Place and counts the rest for a weekday", () => {
+  it("counts the closures first, then names the top Place, for a weekday", () => {
     expect(
       headsUpText({
         kind: "weekday",
         date: "2026-11-08",
         names: ["Vatican Museums", "A", "B"],
       }),
-    ).toBe("Sunday: Vatican Museums and 2 other places are closed.");
+    ).toBe("Sunday: 3 places are closed, including Vatican Museums.");
+  });
+
+  it("uses short names, so a comma in a name doesn't read as a list", () => {
+    expect(
+      headsUpText({
+        kind: "weekday",
+        date: "2026-11-07",
+        names: ["Cheese and Prosciutto Tour, Parma"],
+      }),
+    ).toBe("Saturday: Cheese and Prosciutto Tour is closed.");
+    expect(
+      headsUpText({
+        kind: "season",
+        date: "2026-11-06",
+        names: ["Villa del Balbianello, Lake Como", "Chianti", "C"],
+      }),
+    ).toBe(
+      "November: Villa del Balbianello, Chianti and 1 more are out of season.",
+    );
   });
 
   it("uses the singular for one Place", () => {
@@ -158,7 +233,7 @@ describe("headsUpText", () => {
     ).toBe("Sunday: Vatican Museums is closed.");
     expect(
       headsUpText({ kind: "weekday", date: "2026-11-08", names: ["A", "B"] }),
-    ).toBe("Sunday: A and 1 other place are closed.");
+    ).toBe("Sunday: 2 places are closed, including A.");
   });
 
   it("names two Places and counts the rest for the season", () => {

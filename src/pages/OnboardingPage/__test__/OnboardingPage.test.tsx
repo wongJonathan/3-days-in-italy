@@ -21,16 +21,18 @@ describe("<OnboardingPage>", () => {
 
   it("shows the 3 Trip dates and the heads-ups for them", () => {
     expect(html).toContain("Fri 6 Nov · Sat 7 Nov · Sun 8 Nov");
+    expect(html).toContain("Good to know");
     expect(html).toContain("Sunday:");
     expect(html).toContain("November:");
     expect(html).toContain("out of season.");
   });
 
-  it("lists the 5 Base Cities with open counts and day trips", () => {
+  it("lists the 5 Base Cities with highlights, counts and day trips", () => {
     for (const city of ["Rome", "Florence", "Milan", "Venice", "Bologna"]) {
       expect(html).toContain(`>${city}<`);
     }
-    expect(html).toContain("30 of 30 open on your dates");
+    expect(html).toContain("Colosseum");
+    expect(html).toContain("30 places to choose from");
     expect(html).toContain("+ day trips: Siena, Pienza");
   });
 
@@ -41,8 +43,8 @@ describe("<OnboardingPage>", () => {
   });
 
   it("offers both ways to start, enabled", () => {
-    expect(html).toMatch(/<button[^>]*>Plan my trip<\/button>/);
-    expect(html).not.toMatch(/<button[^>]*disabled[^>]*>Plan my trip/);
-    expect(html).toContain("Start with empty days");
+    expect(html).toMatch(/<button[^>]*>Create my trip<\/button>/);
+    expect(html).not.toMatch(/<button[^>]*disabled[^>]*>Create my trip/);
+    expect(html).toContain("Plan my own trip");
   });
 });
