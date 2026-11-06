@@ -53,16 +53,39 @@ describe("pickActive", () => {
 });
 
 describe("scrollTargetFor", () => {
-  it("scrolls so the item's top lands just past the reading line", () => {
-    // Item at 800px on screen, line at 300px, page scrolled 1000px:
-    // scroll 501px more, so the item sits at 299px, 1px above the line.
-    expect(scrollTargetFor({ itemTop: 800, line: 300, scrollY: 1000 })).toBe(
-      1501,
-    );
+  // Positions are page positions (from the top of the document).
+  const fixedLine = () => 300;
+
+  it("scrolls so the item's top lands 1px past a fixed reading line", () => {
+    // Item 1800px down the page, line 300px down the screen: at 1501 the
+    // item sits at 299px.
+    expect(
+      scrollTargetFor({ itemTop: 1800, lineAt: fixedLine, maxScroll: 5000 }),
+    ).toBe(1501);
+  });
+
+  it("allows for the line sliding down near the top of the page", () => {
+    // The line follows the scroll until it reaches 300px (see readingLine).
+    const sliding = (scroll: number) => Math.min(scroll, 300);
+    // At 251 the item is at 249px and the line at 251px: just past it.
+    // Aiming at the final 300px line instead would land the page at 201,
+    // where the line is still at 201px and the item (at 299px) hasn't
+    // reached it.
+    expect(
+      scrollTargetFor({ itemTop: 500, lineAt: sliding, maxScroll: 5000 }),
+    ).toBe(251);
   });
 
   it("never asks for a negative scroll", () => {
-    expect(scrollTargetFor({ itemTop: 20, line: 300, scrollY: 0 })).toBe(0);
+    expect(
+      scrollTargetFor({ itemTop: 20, lineAt: fixedLine, maxScroll: 5000 }),
+    ).toBe(0);
+  });
+
+  it("stops at the bottom of the page", () => {
+    expect(
+      scrollTargetFor({ itemTop: 9000, lineAt: fixedLine, maxScroll: 5000 }),
+    ).toBe(5000);
   });
 });
 

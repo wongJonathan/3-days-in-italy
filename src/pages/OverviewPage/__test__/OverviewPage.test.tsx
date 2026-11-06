@@ -72,6 +72,13 @@ describe("<OverviewPage>", () => {
     expect(highlighted![0]).toContain(`aria-label="Stop 1: ${name}"`);
   });
 
+  it("lets every Stop card be selected from the keyboard as well as by click", () => {
+    const cards = html.match(/<article[^>]*>/g)!;
+    const total = trip.days.reduce((n, d) => n + d.plan!.stops.length, 0);
+    expect(cards).toHaveLength(total);
+    cards.forEach((card) => expect(card).toContain('tabindex="0"'));
+  });
+
   it("says when a finalized day has nothing planned", () => {
     const empty = finalizeAll(
       createTrip(

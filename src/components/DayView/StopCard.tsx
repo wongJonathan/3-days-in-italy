@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { rulesFor } from "../../utils/availability/seasonal-notes.ts";
 import type { CleanPlace } from "../../utils/data/place.ts";
 import {
@@ -54,11 +54,9 @@ type EditProps = {
   refocus: Refocus | null;
 };
 
-/**
- * Read-only (Trip Overview): no buttons, and selection comes from scrolling,
- * so the card doesn't scroll itself into view when selected.
- */
-type Props = CardProps & (EditProps | { readOnly: true });
+type ReadOnlyProps = { readOnly: true; onSelect?: () => void };
+
+type Props = CardProps & (EditProps | ReadOnlyProps);
 
 /**
  * After a move, React re-orders the cards on the page, and a browser can drop
@@ -107,6 +105,7 @@ export const StopCard = (props: Props) => {
     });
   }, [selected, readOnly, token]);
 
+  const keyboardSelect = props.readOnly ? props.onSelect : undefined;
   const chips = chipsFor(scorePlace(place, prefs));
   // Travel Warnings are shown on the connector above the card instead.
   const warnings = scheduled.warnings.filter((w) => w.kind !== "long-travel");
@@ -120,9 +119,20 @@ export const StopCard = (props: Props) => {
       aria-label={`Stop ${number}: ${place.name}`}
       aria-current={readOnly && selected ? "true" : undefined}
       // Clicking anywhere on the card (including its buttons) selects it.
-      onClick={editing?.onSelect}
+      onClick={props.onSelect}
+      tabIndex={keyboardSelect ? 0 : undefined}
+      onKeyDown={
+        keyboardSelect
+          ? (e: KeyboardEvent) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault(); // Space would also scroll the page
+              keyboardSelect();
+            }
+          : undefined
+      }
       sx={{
         p: 1.5,
+        cursor: props.onSelect ? "pointer" : undefined,
         // Selected: the same look as the open day in the Trip panel.
         borderColor: selected ? "primary.main" : "divider",
         boxShadow: selected ? "inset 3px 0 0 var(--accent)" : "none",
