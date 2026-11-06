@@ -31,6 +31,10 @@ The hours a Trip Day runs, 09:00–22:30 by default. The traveler can change it 
 The state of a Trip Day the traveler has signed off. A finalized day is saved in the browser and can be reopened for editing.
 _Avoid_: Done, locked, saved
 
+**Trip Overview**:
+A read-only view of the whole Trip as a single scroll, day after day, with a map of the Stops for the day being read. It can only be opened once every Trip Day is Finalized.
+_Avoid_: Itinerary, summary, trip panel
+
 **Stop**:
 A Place scheduled on a Trip Day, at a position in that day's order and with computed arrival and departure times. The same Place can be a Stop on more than one Trip Day.
 _Avoid_: Item, entry, activity

@@ -10,7 +10,9 @@ import {
 } from "../../utils/preferences/preferences.ts";
 import { DEFAULT_DAY_WINDOW } from "../../utils/schedule/schedule.ts";
 import {
+  completesTrip,
   createTrip,
+  isTripFinalized,
   tripReducer,
   unplannedMustSees,
   type Trip,
@@ -315,5 +317,58 @@ describe("unplannedMustSees", () => {
 
   it("is empty when every Must-See is planned", () => {
     expect(unplannedMustSees(newTrip())).toEqual([]);
+  });
+});
+
+describe("isTripFinalized", () => {
+  it("is true only once every day is finalized", () => {
+    const two = apply(
+      newTrip(),
+      { type: "finalize", day: 0 },
+      { type: "finalize", day: 1 },
+    );
+    expect(isTripFinalized(two)).toBe(false);
+    expect(isTripFinalized(apply(two, { type: "finalize", day: 2 }))).toBe(
+      true,
+    );
+  });
+
+  it("is false again once a finalized day is changed", () => {
+    const all = apply(
+      newTrip(),
+      { type: "finalize", day: 0 },
+      { type: "finalize", day: 1 },
+      { type: "finalize", day: 2 },
+    );
+    expect(
+      isTripFinalized(apply(all, { type: "removeStop", day: 0, index: 0 })),
+    ).toBe(false);
+  });
+});
+
+describe("completesTrip", () => {
+  const twoDone = apply(
+    newTrip(),
+    { type: "finalize", day: 0 },
+    { type: "finalize", day: 1 },
+  );
+
+  it("is true for the Finalize that signs off the last open day", () => {
+    expect(completesTrip(twoDone, { type: "finalize", day: 2 })).toBe(true);
+  });
+
+  it("is false while another day is still open", () => {
+    expect(completesTrip(newTrip(), { type: "finalize", day: 0 })).toBe(false);
+  });
+
+  it("is false for other actions and for a day with no plan", () => {
+    expect(completesTrip(twoDone, { type: "openDay", day: 2 })).toBe(false);
+    // Finalizing Day 2 opened Day 3, so it has a plan. Take it away to check
+    // that a never-opened day can't complete the Trip.
+    const unopened = {
+      ...twoDone,
+      days: twoDone.days.map((d, i) => (i === 2 ? { ...d, plan: null } : d)),
+    };
+    expect(completesTrip(unopened, { type: "finalize", day: 2 })).toBe(false);
   });
 });

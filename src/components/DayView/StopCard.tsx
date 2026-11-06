@@ -26,24 +26,39 @@ import {
 import { formatTime } from "../../utils/format.ts";
 import { WhyLine } from "../WhyLine/WhyLine.tsx";
 
-type Props = {
+/** What every Stop card shows. */
+type CardProps = {
   number: number;
   place: CleanPlace;
   planned: PlannedStop;
   scheduled: ScheduledStop;
   date: IsoDate;
   prefs: ScoringPreferences;
+  /**
+   * Editor: the last clicked card, highlighted until another card is clicked.
+   * Trip Overview: the card at the reading line.
+   */
+  selected: boolean;
+};
+
+/** The editor's controls: ↑ / ↓ / Remove, and selecting by click. */
+type EditProps = {
+  readOnly?: false;
   isFirst: boolean;
   isLast: boolean;
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRemove: () => void;
-  /** The last clicked card: highlighted until another card is clicked. */
-  selected: boolean;
   onSelect: () => void;
   /** Set on the card just moved with ↑ / ↓ (see Refocus). */
   refocus: Refocus | null;
 };
+
+/**
+ * Read-only (Trip Overview): no buttons, and selection comes from scrolling,
+ * so the card doesn't scroll itself into view when selected.
+ */
+type Props = CardProps & (EditProps | { readOnly: true });
 
 /**
  * After a move, React re-orders the cards on the page, and a browser can drop
@@ -57,22 +72,9 @@ const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** One Stop: time and name, labels, "why" chips, Warnings, actions (design doc §3.3). */
-export const StopCard = ({
-  number,
-  place,
-  planned,
-  scheduled,
-  date,
-  prefs,
-  isFirst,
-  isLast,
-  onMoveUp,
-  onMoveDown,
-  onRemove,
-  selected,
-  onSelect,
-  refocus,
-}: Props) => {
+export const StopCard = (props: Props) => {
+  const { number, place, planned, scheduled, date, prefs, selected } = props;
+  const editing = props.readOnly ? null : props;
   const cardRef = useRef<HTMLElement>(null);
   const upRef = useRef<HTMLButtonElement>(null);
   const downRef = useRef<HTMLButtonElement>(null);
@@ -80,8 +82,8 @@ export const StopCard = ({
   // Runs after React has put the card in its new place. It reads plain values
   // (not the `refocus` object, which is new on every render), and those change
   // only when a new move happens, so it runs once per move.
-  const token = refocus?.token;
-  const direction = refocus?.direction;
+  const token = editing?.refocus?.token;
+  const direction = editing?.refocus?.direction;
   useEffect(() => {
     if (token === undefined) return;
     // Focus the arrow that was pressed, so ↑ ↑ ↑ keeps moving the same Stop.
@@ -96,13 +98,14 @@ export const StopCard = ({
   // the Place list), bring it into view. "nearest" does nothing if it's
   // already visible, so clicking a card never makes the list jump.
   // The token makes a move re-check, since the card may have scrolled away.
+  const readOnly = editing === null;
   useEffect(() => {
-    if (!selected) return;
+    if (!selected || readOnly) return;
     cardRef.current?.scrollIntoView({
       block: "nearest",
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
-  }, [selected, token]);
+  }, [selected, readOnly, token]);
 
   const chips = chipsFor(scorePlace(place, prefs));
   // Travel Warnings are shown on the connector above the card instead.
@@ -115,8 +118,9 @@ export const StopCard = ({
       component="article"
       variant="outlined"
       aria-label={`Stop ${number}: ${place.name}`}
+      aria-current={readOnly && selected ? "true" : undefined}
       // Clicking anywhere on the card (including its buttons) selects it.
-      onClick={onSelect}
+      onClick={editing?.onSelect}
       sx={{
         p: 1.5,
         // Selected: the same look as the open day in the Trip panel.
@@ -235,36 +239,38 @@ export const StopCard = ({
         </Stack>
       )}
 
-      <Stack direction="row" spacing={0.75} sx={{ mt: 1.25 }}>
-        <Button
-          size="small"
-          variant="outlined"
-          ref={upRef}
-          onClick={onMoveUp}
-          disabled={isFirst}
-          aria-label={`Move ${place.name} up`}
-        >
-          ↑
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          ref={downRef}
-          onClick={onMoveDown}
-          disabled={isLast}
-          aria-label={`Move ${place.name} down`}
-        >
-          ↓
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          color="inherit"
-          onClick={onRemove}
-        >
-          Remove
-        </Button>
-      </Stack>
+      {editing && (
+        <Stack direction="row" spacing={0.75} sx={{ mt: 1.25 }}>
+          <Button
+            size="small"
+            variant="outlined"
+            ref={upRef}
+            onClick={editing.onMoveUp}
+            disabled={editing.isFirst}
+            aria-label={`Move ${place.name} up`}
+          >
+            ↑
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            ref={downRef}
+            onClick={editing.onMoveDown}
+            disabled={editing.isLast}
+            aria-label={`Move ${place.name} down`}
+          >
+            ↓
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            color="inherit"
+            onClick={editing.onRemove}
+          >
+            Remove
+          </Button>
+        </Stack>
+      )}
     </Card>
   );
 };

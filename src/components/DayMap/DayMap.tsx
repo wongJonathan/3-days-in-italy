@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   MapContainer,
   Marker,
@@ -9,7 +9,11 @@ import {
   Tooltip,
   useMap,
 } from "react-leaflet";
-import type { MapFocus, MapModel } from "../../utils/editor/map-model.ts";
+import type {
+  LatLng,
+  MapFocus,
+  MapModel,
+} from "../../utils/editor/map-model.ts";
 import { COLORS } from "../../utils/colors.ts";
 
 /**
@@ -23,44 +27,73 @@ const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 /**
- * Every pin made so far, by number and warning. react-leaflet rebuilds a
- * marker's DOM whenever its `icon` prop is a new object, so each pin is
- * created once and reused on every render. There are only a few (one per
- * Stop number, with or without a Warning), so the cache stays tiny.
+ * Every pin made so far, by number, warning and highlight. react-leaflet
+ * rebuilds a marker's DOM whenever its `icon` prop is a new object, so each
+ * pin is created once and reused on every render. There are only a few (one
+ * per Stop number, with or without a Warning or highlight), so the cache
+ * stays tiny.
  */
 const pins = new Map<string, L.DivIcon>();
 
 /** A numbered pin matching the Stop card's badge. HTML, so no image files are needed. */
-const pinIcon = (number: number, hasWarning: boolean): L.DivIcon => {
-  const key = `${number}-${hasWarning}`;
+const pinIcon = (
+  number: number,
+  hasWarning: boolean,
+  active: boolean,
+): L.DivIcon => {
+  const key = `${number}-${hasWarning}-${active}`;
   let pin = pins.get(key);
   if (!pin) {
+    // The highlighted pin is bigger; the anchors keep it centred on its spot.
+    const size = active ? 36 : 28;
+    const classes = ["map-pin", active && "map-pin--active"].filter(Boolean);
     pin = L.divIcon({
       className: "",
-      html: `<span class="map-pin${hasWarning ? " map-pin--warning" : ""}">${number}</span>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
-      tooltipAnchor: [14, 0],
+      html: `<span class="${classes.join(" ")}">${number}</span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+      tooltipAnchor: [size / 2, 0],
     });
     pins.set(key, pin);
   }
   return pin;
 };
 
-/** Moves the view when the day's focus changes (Leaflet only reads `center` once, on creation). */
-const FocusView = ({ focus }: { focus: MapFocus }) => {
+/**
+ * Moves the view. When the day's focus changes, it fits the day (Leaflet only
+ * reads `center` once, on creation). Otherwise, when a highlighted pin is
+ * given (Trip Overview), it pans only if that pin has left the view, so
+ * scrolling through a day doesn't make the map jump at every Stop.
+ * One effect does both: a separate pan could interrupt the fit's animation.
+ */
+const FocusView = ({
+  focus,
+  active,
+}: {
+  focus: MapFocus;
+  active: LatLng | null;
+}) => {
   const map = useMap();
   // A new `focus` object arrives on every render, so the effect depends on its
   // text instead: it re-runs only when the focus really changes.
   const key = JSON.stringify(focus);
+  const fitted = useRef<string | null>(null);
+  const lat = active?.[0];
+  const lng = active?.[1];
   useEffect(() => {
-    const target = JSON.parse(key) as MapFocus;
-    if (target.kind === "fit") {
-      map.fitBounds(target.bounds, { padding: [32, 32] });
-    } else {
-      map.setView(target.center, target.zoom);
+    if (fitted.current !== key) {
+      fitted.current = key;
+      const target = JSON.parse(key) as MapFocus;
+      if (target.kind === "fit") {
+        map.fitBounds(target.bounds, { padding: [32, 32] });
+      } else {
+        map.setView(target.center, target.zoom);
+      }
+      return;
     }
-  }, [map, key]);
+    if (lat === undefined || lng === undefined) return;
+    if (!map.getBounds().contains([lat, lng])) map.panTo([lat, lng]);
+  }, [map, key, lat, lng]);
   return null;
 };
 
@@ -79,10 +112,17 @@ const ResizeWatcher = () => {
   return null;
 };
 
-type Props = { model: MapModel; label: string };
+type Props = {
+  model: MapModel;
+  label: string;
+  /** The highlighted Stop (Trip Overview): a bigger pin, kept in view. */
+  activeId?: string | null;
+  /** Called with the Stop's Place id when its pin is clicked. */
+  onPinClick?: (placeId: string) => void;
+};
 
 /** The open day on a map: numbered pins and dashed straight lines (design doc §3.2). */
-const DayMap = ({ model, label }: Props) => (
+const DayMap = ({ model, label, activeId = null, onPinClick }: Props) => (
   <div className="map" role="region" aria-label={label}>
     <MapContainer
       center={[42.5, 12.5]}
@@ -102,7 +142,11 @@ const DayMap = ({ model, label }: Props) => (
         <Marker
           key={m.placeId}
           position={m.position}
-          icon={pinIcon(m.number, m.hasWarning)}
+          icon={pinIcon(m.number, m.hasWarning, m.placeId === activeId)}
+          zIndexOffset={m.placeId === activeId ? 1000 : 0}
+          eventHandlers={
+            onPinClick ? { click: () => onPinClick(m.placeId) } : undefined
+          }
           title={`${m.number}. ${m.name}`}
           alt={`${m.number}. ${m.name}`}
         >
@@ -111,7 +155,12 @@ const DayMap = ({ model, label }: Props) => (
           </Tooltip>
         </Marker>
       ))}
-      <FocusView focus={model.focus} />
+      <FocusView
+        focus={model.focus}
+        active={
+          model.markers.find((m) => m.placeId === activeId)?.position ?? null
+        }
+      />
       <ResizeWatcher />
     </MapContainer>
   </div>

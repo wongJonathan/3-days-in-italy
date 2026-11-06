@@ -9,14 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { rulesFor } from "../../utils/availability/seasonal-notes.ts";
 import type { CleanPlace } from "../../utils/data/place.ts";
-import {
-  countLabel,
-  regenerateHint,
-  travelLabel,
-  warningText,
-} from "../../utils/editor/copy.ts";
+import { countLabel, regenerateHint } from "../../utils/editor/copy.ts";
 import { moveAnnouncement } from "../../utils/editor/move-feedback.ts";
 import { scheduleStops } from "../../utils/generator/generate-day.ts";
 import {
@@ -28,6 +22,7 @@ import type { ScheduledDay } from "../../utils/schedule/schedule.ts";
 import type { Trip, TripAction } from "../../stores/trip.ts";
 import { formatDate, formatTime, parseTimeInput } from "../../utils/format.ts";
 import { EmptyState } from "../EmptyState/EmptyState.tsx";
+import { Connector } from "./Connector.tsx";
 import { StopCard } from "./StopCard.tsx";
 
 /** The last ↑ / ↓ move, worked out when it was clicked (see `move`). */
@@ -290,29 +285,9 @@ export const DayView = ({
           <Box component="ol" sx={{ listStyle: "none", m: 0, mt: 2, p: 0 }}>
             {schedule.stops.map((scheduled, i) => {
               const place = placesById.get(scheduled.placeId)!;
-              const travelWarning = scheduled.warnings.find(
-                (w) => w.kind === "long-travel",
-              );
               return (
                 <li key={scheduled.placeId}>
-                  {scheduled.travel && (
-                    // The dashed "connector" line between cards stays plain CSS.
-                    <p
-                      className={`connector${travelWarning ? " connector--warning" : ""}`}
-                    >
-                      {travelLabel(scheduled.travel)}
-                      {travelWarning && (
-                        <>
-                          {" "}
-                          <span aria-hidden="true">!</span>{" "}
-                          {warningText(travelWarning, {
-                            date: day.date,
-                            rules: rulesFor(place.id),
-                          })}
-                        </>
-                      )}
-                    </p>
-                  )}
+                  <Connector stop={scheduled} date={day.date} />
                   <StopCard
                     number={i + 1}
                     place={place}

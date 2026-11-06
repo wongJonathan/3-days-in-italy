@@ -236,10 +236,116 @@ body {
   box-sizing: border-box;
 }
 
-/* A Stop with a Warning: amber ring, same number (shape + colour, not colour alone) */
-.map-pin--warning {
-  border-color: var(--warning-ring);
-  box-shadow: 0 0 0 2px var(--warning-ring);
+
+
+/* The highlighted Stop's pin (Trip Overview): bigger, with an accent halo */
+.map-pin--active {
+  width: 36px;
+  height: 36px;
+  font-size: 0.9375rem;
+  box-shadow:
+    0 0 0 3px var(--surface),
+    0 0 0 5px var(--accent);
+}
+
+/* ---------- Trip Overview: one scroll, map pinned beside or above ---------- */
+
+/*
+ * The page itself scrolls (no inner scroll boxes), so `position: sticky` works
+ * on the map and the day headers. Narrow screens (the default here): bar, then
+ * a short map pinned to the top, then the list. Each day header pins just
+ * under the map, inside its own section, so the next day's header pushes it
+ * up.
+ */
+.overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.overview__bar {
+  padding-bottom: 12px;
+}
+
+.overview__map {
+  position: sticky;
+  top: 0;
+  /* Above the day headers; also keeps Leaflet's own z-indexes inside it. */
+  z-index: 2;
+  /* The day headers' `top` must match this height. */
+  height: max(200px, 35vh);
+  height: max(200px, 35dvh); /* dvh: excludes mobile browser toolbars */
+  padding-bottom: 8px;
+  box-sizing: border-box;
+  background: var(--surface);
+}
+
+.overview__map .map {
+  height: 100%;
+  margin: 0;
+}
+
+.overview__list {
+  /* Room at the end, so the last Stops can reach the reading line too. */
+  padding-bottom: 40vh;
+}
+
+.overview-day__header {
+  position: sticky;
+  /* Just under the pinned map: must match .overview__map's height. */
+  top: max(200px, 35vh);
+  top: max(200px, 35dvh);
+  z-index: 1;
+  margin: 0;
+  padding: 8px 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.overview-day + .overview-day {
+  margin-top: 24px;
+}
+
+/* Tight phones: date and city first, the Stop count goes. */
+@media (max-width: 479px) {
+  .overview-day__count {
+    display: none;
+  }
+}
+
+/* Wide screens: the list centred in its column, the map pinned on the right. */
+@media (min-width: 1024px) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+    column-gap: 24px;
+  }
+
+  .overview__bar {
+    grid-column: 1 / -1;
+  }
+
+  .overview__list {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .overview__map {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    top: 16px; /* body padding */
+    height: calc(100vh - 32px);
+    height: calc(100dvh - 32px);
+    padding-bottom: 0;
+  }
+
+  .overview-day__header {
+    top: 0;
+  }
 }
 
 /* ---------- Narrow screens: tabs and a bottom bar (design doc §3.8) ---------- */
