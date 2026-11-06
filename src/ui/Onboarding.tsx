@@ -10,7 +10,6 @@ import {
   Card,
   Checkbox,
   Chip,
-  Divider,
   FormControlLabel,
   FormGroup,
   Stack,
@@ -287,7 +286,7 @@ export const Onboarding = ({ places, today, onStart }: Props) => {
             >
               {INTERESTS.map((interest) => {
                 const selected = prefs.interests.includes(interest);
-                const chip = (
+                return (
                   <Chip
                     key={interest}
                     label={interestLabel(interest)}
@@ -300,7 +299,6 @@ export const Onboarding = ({ places, today, onStart }: Props) => {
                     }
                   />
                 );
-                return chip;
               })}
             </Stack>
           </Setting>
