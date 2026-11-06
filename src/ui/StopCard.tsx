@@ -1,5 +1,4 @@
-// EXPERIMENT (branch experiment/mui-place-list): the Stop card rebuilt with
-// MUI components. Same content and actions as main; only the markup differs.
+// The Stop card, built with MUI components.
 import {
   Alert,
   Box,
@@ -9,6 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useEffect, useRef } from "react";
 import { rulesFor } from "../availability/seasonal-notes.ts";
 import type { CleanPlace } from "../data/place.ts";
 import {
@@ -39,9 +39,26 @@ type Props = {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRemove: () => void;
+  /** The last clicked card: highlighted until another card is clicked. */
+  selected: boolean;
+  onSelect: () => void;
+  /** Set on the card just moved with ↑ / ↓ (see Refocus). */
+  refocus: Refocus | null;
 };
 
+/**
+ * After a move, React re-orders the cards on the page, and a browser can drop
+ * keyboard focus from a moved element. So the moved card puts focus back on
+ * the arrow that was pressed, and scrolls into view. `token` changes on every
+ * move, so pressing ↑ twice does it twice.
+ */
+export type Refocus = { direction: "up" | "down"; token: number };
+
 const MAX_CHIPS = 3;
+
+/** True when the traveler asked their system for less motion. */
+const prefersReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** One Stop: time and name, labels, "why" chips, Warnings, actions (design doc §3.3). */
 export const StopCard = ({
@@ -56,7 +73,41 @@ export const StopCard = ({
   onMoveUp,
   onMoveDown,
   onRemove,
+  selected,
+  onSelect,
+  refocus,
 }: Props) => {
+  const cardRef = useRef<HTMLElement>(null);
+  const upRef = useRef<HTMLButtonElement>(null);
+  const downRef = useRef<HTMLButtonElement>(null);
+
+  // Runs after React has put the card in its new place. It reads plain values
+  // (not the `refocus` object, which is new on every render), and those change
+  // only when a new move happens, so it runs once per move.
+  const token = refocus?.token;
+  const direction = refocus?.direction;
+  useEffect(() => {
+    if (token === undefined) return;
+    // Focus the arrow that was pressed, so ↑ ↑ ↑ keeps moving the same Stop.
+    // At the top or bottom that arrow is disabled: use the other one.
+    const pressed = direction === "up" ? upRef : downRef;
+    const other = direction === "up" ? downRef : upRef;
+    const target = pressed.current?.disabled ? other : pressed;
+    target.current?.focus({ preventScroll: true });
+  }, [token, direction]);
+
+  // Whenever this card becomes selected (a click, a move, or just added from
+  // the Place list), bring it into view. "nearest" does nothing if it's
+  // already visible, so clicking a card never makes the list jump.
+  // The token makes a move re-check, since the card may have scrolled away.
+  useEffect(() => {
+    if (!selected) return;
+    cardRef.current?.scrollIntoView({
+      block: "nearest",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [selected, token]);
+
   const chips = chipsFor(scorePlace(place, prefs));
   // Travel Warnings are shown on the connector above the card instead.
   const warnings = scheduled.warnings.filter((w) => w.kind !== "long-travel");
@@ -64,10 +115,18 @@ export const StopCard = ({
 
   return (
     <Card
+      ref={cardRef}
       component="article"
       variant="outlined"
       aria-label={`Stop ${number}: ${place.name}`}
-      sx={{ p: 1.5 }}
+      // Clicking anywhere on the card (including its buttons) selects it.
+      onClick={onSelect}
+      sx={{
+        p: 1.5,
+        // Selected: the same look as the open day in the Trip panel.
+        borderColor: selected ? "primary.main" : "divider",
+        boxShadow: selected ? "inset 3px 0 0 var(--accent)" : "none",
+      }}
     >
       <Stack
         direction="row"
@@ -189,6 +248,7 @@ export const StopCard = ({
         <Button
           size="small"
           variant="outlined"
+          ref={upRef}
           onClick={onMoveUp}
           disabled={isFirst}
           aria-label={`Move ${place.name} up`}
@@ -198,6 +258,7 @@ export const StopCard = ({
         <Button
           size="small"
           variant="outlined"
+          ref={downRef}
           onClick={onMoveDown}
           disabled={isLast}
           aria-label={`Move ${place.name} down`}

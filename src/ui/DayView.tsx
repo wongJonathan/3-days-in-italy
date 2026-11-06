@@ -1,7 +1,6 @@
-// EXPERIMENT (branch experiment/mui-place-list): the day view rebuilt with MUI
-// components. Same content and actions as main; only the markup differs.
-// The layout classes (day, day__header, day__body, day__buttons, connector)
-// are kept so the column scrolling and narrow-screen rules still apply.
+// The day view, built with MUI components. The layout classes (day,
+// day__header, day__body, day__buttons, connector) are kept so the column
+// scrolling and narrow-screen rules still apply.
 import {
   Alert,
   Box,
@@ -10,9 +9,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { rulesFor } from "../availability/seasonal-notes.ts";
 import type { CleanPlace } from "../data/place.ts";
 import { regenerateHint, travelLabel, warningText } from "../editor/copy.ts";
+import { moveAnnouncement } from "../editor/move-feedback.ts";
+import { scheduleStops } from "../generator/generate-day.ts";
 import {
   BASE_CITY_NAMES,
   baseCityOf,
@@ -23,6 +25,16 @@ import type { Trip, TripAction } from "../trip/trip.ts";
 import { formatDate, formatTime, parseTimeInput } from "./format.ts";
 import { StopCard } from "./StopCard.tsx";
 
+/** The last ↑ / ↓ move, worked out when it was clicked (see `move`). */
+type LastMove = {
+  dayIndex: number;
+  placeId: string;
+  direction: "up" | "down";
+  /** Changes on every move, so the moved card refocuses every time. */
+  token: number;
+  announcement: string;
+};
+
 type Props = {
   trip: Trip;
   index: number;
@@ -32,6 +44,12 @@ type Props = {
   dispatch: (action: TripAction) => void;
   /** Shows the Place list and focuses its search (empty-day state). */
   onAddPlaces: () => void;
+  /**
+   * The selected Stop on this day (or null). The selection lives in Editor,
+   * so the Place list can select a Stop it has just added.
+   */
+  selectedId: string | null;
+  onSelect: (placeId: string) => void;
 };
 
 /** The open day: a header with every control, then the timed schedule (design doc §3.2). */
@@ -43,10 +61,56 @@ export const DayView = ({
   unplanned,
   dispatch,
   onAddPlaces,
+  selectedId,
+  onSelect,
 }: Props) => {
+  // Hooks must run on every render, so this sits before the early return.
+  const [lastMove, setLastMove] = useState<LastMove | null>(null);
+
   const day = trip.days[index];
   const plan = day.plan;
   if (!plan || !schedule) return null;
+
+  /**
+   * Moves a Stop and records it, so the moved card can keep keyboard focus
+   * and the move can be read out. The new times are worked out here with the
+   * same `scheduleStops` the editor uses, so they match what will be shown.
+   */
+  const move = (from: number, direction: "up" | "down") => {
+    const to = direction === "up" ? from - 1 : from + 1;
+    const reordered = [...plan.stops];
+    reordered.splice(to, 0, ...reordered.splice(from, 1));
+    const next = scheduleStops(reordered, {
+      date: day.date,
+      window: day.window,
+      mode: trip.prefs.mode,
+      placesById,
+    });
+    const placeId = plan.stops[from].placeId;
+    const moved = next.stops[to];
+
+    setLastMove({
+      dayIndex: index,
+      placeId,
+      direction,
+      token: (lastMove?.token ?? 0) + 1,
+      announcement: moveAnnouncement({
+        name: placesById.get(placeId)?.name ?? placeId,
+        direction,
+        position: to + 1,
+        total: next.stops.length,
+        start: moved.start,
+        end: moved.end,
+      }),
+    });
+    dispatch({ type: "moveStop", day: index, from, to });
+  };
+
+  /** Only the card just moved on this day gets refocused. */
+  const refocusFor = (placeId: string) =>
+    lastMove?.dayIndex === index && lastMove.placeId === placeId
+      ? { direction: lastMove.direction, token: lastMove.token }
+      : null;
 
   const warningCount = schedule.warningCount;
   const pinnedElsewhere =
@@ -279,25 +343,14 @@ export const DayView = ({
                     prefs={trip.prefs}
                     isFirst={i === 0}
                     isLast={i === schedule.stops.length - 1}
-                    onMoveUp={() =>
-                      dispatch({
-                        type: "moveStop",
-                        day: index,
-                        from: i,
-                        to: i - 1,
-                      })
-                    }
-                    onMoveDown={() =>
-                      dispatch({
-                        type: "moveStop",
-                        day: index,
-                        from: i,
-                        to: i + 1,
-                      })
-                    }
+                    onMoveUp={() => move(i, "up")}
+                    onMoveDown={() => move(i, "down")}
                     onRemove={() =>
                       dispatch({ type: "removeStop", day: index, index: i })
                     }
+                    selected={selectedId === scheduled.placeId}
+                    onSelect={() => onSelect(scheduled.placeId)}
+                    refocus={refocusFor(scheduled.placeId)}
                   />
                 </li>
               );
@@ -305,6 +358,11 @@ export const DayView = ({
           </Box>
         )}
       </div>
+
+      {/* Read out after each move: "Pantheon moved up to stop 2 of 5, now 11:19–12:04." */}
+      <p className="visually-hidden" aria-live="polite">
+        {lastMove?.dayIndex === index ? lastMove.announcement : ""}
+      </p>
     </section>
   );
 };

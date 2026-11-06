@@ -43,6 +43,8 @@ type Props = {
   trip: Trip;
   places: CleanPlace[];
   dispatch: (action: TripAction) => void;
+  /** Called after a Place is added, so the new Stop can be selected. */
+  onAdded: (placeId: string) => void;
 };
 
 const MAX_CHIPS = 3;
@@ -69,7 +71,7 @@ const GroupHeading = ({ title, count }: { title: string; count: number }) => (
 );
 
 /** The Place list for the open day: filters, budget groups, Add and Must-See (design doc §3.7). */
-export const PlaceList = ({ trip, places, dispatch }: Props) => {
+export const PlaceList = ({ trip, places, dispatch, onAdded }: Props) => {
   const [filters, setFilters] = useState<ListFilters>(DEFAULT_FILTERS);
   const [announcement, setAnnouncement] = useState("");
   const update = (changes: Partial<ListFilters>) =>
@@ -88,6 +90,7 @@ export const PlaceList = ({ trip, places, dispatch }: Props) => {
 
   const add = (place: CleanPlace) => {
     dispatch({ type: "addPlace", day: dayIndex, placeId: place.id });
+    onAdded(place.id);
     setAnnouncement(`Added ${place.name} to Day ${dayIndex + 1}.`);
   };
 

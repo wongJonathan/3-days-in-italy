@@ -65,6 +65,12 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
       : null,
   );
   const [tab, setTab] = useState<Tab>("schedule");
+  // The selected Stop card, per day. It lives here (not in DayView) so that
+  // both the day (click, ↑ / ↓) and the Place list (Add) can set it.
+  const [selection, setSelection] = useState<{
+    dayIndex: number;
+    placeId: string;
+  } | null>(null);
 
   // The map needs a real browser (Leaflet uses `window`). During server
   // rendering (the Node smoke tests) the third function answers instead,
@@ -88,6 +94,9 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
   const day = trip.days[index];
   const schedule = schedules[index];
   const warningCount = schedule?.warningCount ?? 0;
+  const selectedId = selection?.dayIndex === index ? selection.placeId : null;
+  const select = (placeId: string) =>
+    setSelection({ dayIndex: index, placeId });
 
   const mapPlaceholder = (
     <div className="map map--placeholder">Loading map…</div>
@@ -132,6 +141,8 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
         unplanned={unplannedMustSees(trip)}
         dispatch={dispatch}
         onAddPlaces={goToPlaces}
+        selectedId={selectedId}
+        onSelect={select}
       />
       <aside className="editor__side" aria-label="Map and places">
         {inBrowser ? (
@@ -144,7 +155,12 @@ export const Editor = ({ trip, places, dispatch, onReset, notices }: Props) => {
         ) : (
           mapPlaceholder
         )}
-        <PlaceList trip={trip} places={places} dispatch={dispatch} />
+        <PlaceList
+          trip={trip}
+          places={places}
+          dispatch={dispatch}
+          onAdded={select}
+        />
       </aside>
 
       {/* Narrow screens: the day's main actions stay in reach of the thumb. */}
