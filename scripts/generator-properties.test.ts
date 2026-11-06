@@ -2,30 +2,30 @@
 // whole 3-day Trips generated for a year of Start Dates × several Preference sets.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { availabilityOn } from "../src/availability/availability.ts";
-import { rulesFor } from "../src/availability/seasonal-notes.ts";
-import type { CleanPlace } from "../src/data/place.ts";
+import { availabilityOn } from "../src/utils/availability/availability.ts";
+import { rulesFor } from "../src/utils/availability/seasonal-notes.ts";
+import type { CleanPlace } from "../src/utils/data/place.ts";
 import {
   generateDay,
   MEAL_WINDOWS,
   type GeneratedDay,
-} from "../src/generator/generate-day.ts";
-import { addDays } from "../src/hours/calendar.ts";
-import { baseCityOf } from "../src/preferences/base-cities.ts";
+} from "../src/utils/generator/generate-day.ts";
+import { addDays } from "../src/utils/hours/calendar.ts";
+import { baseCityOf } from "../src/utils/preferences/base-cities.ts";
 import {
   DEFAULT_PREFERENCES,
   SIGHTS_PER_PACE,
   type Preferences,
-} from "../src/preferences/preferences.ts";
+} from "../src/utils/preferences/preferences.ts";
 import {
   DEFAULT_DAY_WINDOW,
   DEFAULT_VISIT_MINUTES,
   LONG_TRAVEL_MINUTES,
-} from "../src/schedule/schedule.ts";
+} from "../src/utils/schedule/schedule.ts";
 
 const places = JSON.parse(
   readFileSync(
-    new URL("../src/data/italy-clean.json", import.meta.url),
+    new URL("../src/utils/data/italy-clean.json", import.meta.url),
     "utf8",
   ),
 ) as CleanPlace[];

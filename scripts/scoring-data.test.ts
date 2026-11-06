@@ -1,12 +1,12 @@
 // Guards on the real clean dataset for scoring: no Interest chip is dead weight.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import type { CleanPlace } from "../src/data/place.ts";
-import { INTEREST_TAGS } from "../src/preferences/interests.ts";
+import type { CleanPlace } from "../src/utils/data/place.ts";
+import { INTEREST_TAGS } from "../src/utils/preferences/interests.ts";
 
 const places = JSON.parse(
   readFileSync(
-    new URL("../src/data/italy-clean.json", import.meta.url),
+    new URL("../src/utils/data/italy-clean.json", import.meta.url),
     "utf8",
   ),
 ) as CleanPlace[];
