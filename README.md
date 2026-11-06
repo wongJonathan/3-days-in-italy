@@ -23,7 +23,7 @@ npm run dev        # http://localhost:5173
 | `npm run build` | Type-check, then build to `dist/` |
 | `npm run lint` | Lint with oxlint |
 | `npm run format` / `format:check` | Format with Prettier / check only |
-| `npm run data:clean` | Regenerate `src/data/italy-clean.json` and the review checklist from `italy.json` + `src/data/corrections.ts` |
+| `npm run data:clean` | Regenerate `src/utils/data/italy-clean.json` and the review checklist from `italy.json` + `src/utils/data/corrections.ts` |
 
 ## How it's organised
 
@@ -31,23 +31,29 @@ npm run dev        # http://localhost:5173
 italy.json                  raw dataset (never edited)
 scripts/clean-data.ts       builds the clean dataset (+ dataset-wide tests)
 src/
-  data/                     corrections, cleaning, the clean dataset
-  hours/                    opening-hours parser, Rome calendar helpers
-  availability/             seasonal rules, "is it open on this date?"
-  travel/                   Travel Time estimates
-  schedule/                 timed day + Warnings
-  preferences/              Preferences, Interests, Base Cities
-  scoring/                  scores, "why" chips, budget groups
-  generator/                plans one day (ADR 0002)
-  trip/                     the Trip: every editor action, save/load
-  editor/, onboarding/      wording and view logic for the screens
-  ui/                       React components (MUI)
+  index.tsx                 entry point
+  components/<Name>/        React components (MUI), tests in __test__/
+    App/                    the app shell: onboarding or the editor
+  pages/                    the two screens: OnboardingPage, EditorPage
+  stores/                   the Trip: every editor action, save/load
+  utils/                    plain TypeScript, tested beside each file
+    data/                   corrections, cleaning, the clean dataset
+    hours/                  opening-hours parser, Rome calendar helpers
+    availability/           seasonal rules, "is it open on this date?"
+    travel/                 Travel Time estimates
+    schedule/               timed day + Warnings
+    preferences/            Preferences, Interests, Base Cities
+    scoring/                scores, "why" chips, budget groups
+    generator/              plans one day (ADR 0002)
+    editor/, onboarding/    wording and view logic for the screens
+    colors.ts, theme.ts     the colours (single source) and MUI theme
+    format.ts               dates and times
 ```
 
 
 ## Data
 
-`italy.json` is the source of truth and is never edited. `src/data/corrections.ts` lists every fix with a reason and a source (`manual`, `assumption`, `ai-draft`, `rule`). **AI-drafted corrections apply only after a person sets `approved: true`.** Tests fail if a correction is stale or if the committed clean data doesn't match what the script would produce.
+`italy.json` is the source of truth and is never edited. `src/utils/data/corrections.ts` lists every fix with a reason and a source (`manual`, `assumption`, `ai-draft`, `rule`). **AI-drafted corrections apply only after a person sets `approved: true`.** Tests fail if a correction is stale or if the committed clean data doesn't match what the script would produce.
 
 ## Deploy
 

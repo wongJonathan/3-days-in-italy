@@ -1,11 +1,11 @@
 /*
  * With every component in MUI, this file only holds what MUI doesn't: the page
  * layout (columns, scrolling, narrow-screen tabs), the map, and a few
- * app-specific pieces. Component looks live in src/ui/theme.ts and each
+ * app-specific pieces. Component looks live in src/utils/theme.ts and each
  * component's `sx`.
  *
  * Colours: the var(--…) values used here are NOT defined in this file. They
- * come from src/ui/tokens.ts (the single source), which App puts on :root.
+ * come from src/utils/colors.ts (the single source), which App puts on :root.
  */
 
 :root {

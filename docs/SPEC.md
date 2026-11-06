@@ -78,7 +78,7 @@ Some tags aren't shown as chips, either because other parts of the planner alrea
 ## Data handling
 
 - `italy.json` is never edited. A script combines it with a corrections file (fixes, Seasonal Rules, Assumed hours) to produce `italy-clean.json`, which is the only data the app reads.
-- Every correction records the reason for it and its source: *manual*, *assumption* or *AI draft*. Normalizations that apply to every Place, such as tag spelling, are tagged *rule*. The script also writes a review checklist ([docs/data/corrections-review.md](data/corrections-review.md)) with one row per changed field. Rows drafted by AI are left out until a person approves them, which they do by setting `approved: true` in `src/data/corrections.ts`.
+- Every correction records the reason for it and its source: *manual*, *assumption* or *AI draft*. Normalizations that apply to every Place, such as tag spelling, are tagged *rule*. The script also writes a review checklist ([docs/data/corrections-review.md](data/corrections-review.md)) with one row per changed field. Rows drafted by AI are left out until a person approves them, which they do by setting `approved: true` in `src/utils/data/corrections.ts`.
 - A Place that turns out not to exist is *removed* rather than corrected. It's listed in the same file with a reason, and the review shows it as one row.
 
 ## MVP scope

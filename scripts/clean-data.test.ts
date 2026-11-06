@@ -2,11 +2,11 @@
 // the raw data stays valid input, and the committed outputs are never stale.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { cleanPlaces } from "../src/data/clean.ts";
-import { corrections, removals } from "../src/data/corrections.ts";
-import type { Place } from "../src/data/place.ts";
-import { renderReview } from "../src/data/review.ts";
-import { parseHours } from "../src/hours/parse.ts";
+import { cleanPlaces } from "../src/utils/data/clean.ts";
+import { corrections, removals } from "../src/utils/data/corrections.ts";
+import type { Place } from "../src/utils/data/place.ts";
+import { renderReview } from "../src/utils/data/review.ts";
+import { parseHours } from "../src/utils/hours/parse.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -43,7 +43,7 @@ describe("cleaning the real dataset", () => {
   });
 
   it("matches the committed italy-clean.json (run `npm run data:clean` if this fails)", () => {
-    expect(JSON.parse(read("src/data/italy-clean.json"))).toEqual(places);
+    expect(JSON.parse(read("src/utils/data/italy-clean.json"))).toEqual(places);
   });
 
   it("matches the committed review checklist (run `npm run data:clean` if this fails)", () => {

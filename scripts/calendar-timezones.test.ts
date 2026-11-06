@@ -3,7 +3,7 @@
 // future change that slips in local-time code like getDay() or toLocaleDateString().
 // Lives in scripts/ because it needs Node's `process`, which the browser tsconfig in src/ lacks.
 import { afterEach, describe, expect, it } from "vitest";
-import { todayInRome, weekdayOf } from "../src/hours/calendar.ts";
+import { todayInRome, weekdayOf } from "../src/utils/hours/calendar.ts";
 
 describe("calendar helpers are independent of the device time zone", () => {
   const zones = [

@@ -2,10 +2,10 @@
 // Usage: npm run data:clean
 // All logic lives in src/data (tested); this file only reads and writes.
 import { readFileSync, writeFileSync } from "node:fs";
-import { cleanPlaces } from "../src/data/clean.ts";
-import { corrections, removals } from "../src/data/corrections.ts";
-import type { Place } from "../src/data/place.ts";
-import { renderReview } from "../src/data/review.ts";
+import { cleanPlaces } from "../src/utils/data/clean.ts";
+import { corrections, removals } from "../src/utils/data/corrections.ts";
+import type { Place } from "../src/utils/data/place.ts";
+import { renderReview } from "../src/utils/data/review.ts";
 
 const root = new URL("../", import.meta.url);
 
@@ -15,7 +15,7 @@ const raw = JSON.parse(
 const { places, review } = cleanPlaces(raw, corrections, removals);
 
 writeFileSync(
-  new URL("src/data/italy-clean.json", root),
+  new URL("src/utils/data/italy-clean.json", root),
   JSON.stringify(places, null, 2) + "\n",
 );
 writeFileSync(

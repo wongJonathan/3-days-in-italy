@@ -2,13 +2,13 @@
 // decision, every override parses, and the remaining unknowns are the ones we expect.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { seasonalNotes } from "../src/availability/seasonal-notes.ts";
-import type { CleanPlace } from "../src/data/place.ts";
-import { parseHours } from "../src/hours/parse.ts";
+import { seasonalNotes } from "../src/utils/availability/seasonal-notes.ts";
+import type { CleanPlace } from "../src/utils/data/place.ts";
+import { parseHours } from "../src/utils/hours/parse.ts";
 
 const places = JSON.parse(
   readFileSync(
-    new URL("../src/data/italy-clean.json", import.meta.url),
+    new URL("../src/utils/data/italy-clean.json", import.meta.url),
     "utf8",
   ),
 ) as CleanPlace[];
