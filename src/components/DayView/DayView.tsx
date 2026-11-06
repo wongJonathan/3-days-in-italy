@@ -153,7 +153,7 @@ export const DayView = ({
             select
             size="small"
             label="City"
-            value={day.dayArea ?? ""}
+            value={day.dayArea ?? plan.baseCity ?? ""}
             onChange={(e) =>
               dispatch({
                 type: "setDayArea",
@@ -166,14 +166,12 @@ export const DayView = ({
               inputLabel: { shrink: true },
             }}
           >
-            <option value="">
-              {plan.baseCity
-                ? `${plan.baseCity} · chosen for you`
-                : "Choose for me"}
+            <option value="" disabled>
+              Select area
             </option>
             {BASE_CITY_NAMES.map((city) => (
               <option key={city} value={city}>
-                {city}
+                {city === plan.baseCity ? `${city} · chosen for you` : city}
               </option>
             ))}
           </TextField>

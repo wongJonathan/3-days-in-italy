@@ -39,7 +39,25 @@ describe("<EditorPage>", () => {
 
   it("shows the open day's header and actions", () => {
     expect(html).toContain("Day 1 · Fri 6 Nov</h2>");
-    expect(html).toContain("chosen for you");
+    // The generated city is selected and labelled in the list itself, not
+    // added as an extra option.
+    const city = trip.days[0].plan!.baseCity!;
+    expect(html).toContain(
+      `<option value="${city}" selected="">${city} · chosen for you</option>`,
+    );
+    expect(html).not.toContain(`<option value="${city}">`);
+    expect(html.match(/chosen for you/g)).toHaveLength(1);
+  });
+
+  it("drops 'chosen for you' once the traveler picks the city", () => {
+    const reduce = tripReducer(PLACES);
+    const city = trip.days[0].plan!.baseCity!;
+    const pinned = reduce(trip, { type: "setDayArea", day: 0, city });
+    const page = render(pinned);
+    expect(page).toContain(
+      `<option value="${city}" selected="">${city}</option>`,
+    );
+    expect(page).not.toContain("chosen for you");
     expect(html).toMatch(/\d+ Stops · \d+ Warnings? · ends \d\d:\d\d/);
     expect(html).toContain("Regenerate day");
     expect(html).toContain("Finalize day");
@@ -162,5 +180,15 @@ describe("<EditorPage> narrow-screen parts", () => {
     expect(page).toContain("Day 1 has no Stops yet.");
     expect(page).toContain("Suggest this day");
     expect(page).toContain("Add places →");
+  });
+
+  it("shows a 'Select area' placeholder when no city is chosen yet", () => {
+    const empty = createTrip(
+      { startDate: "2026-11-06", prefs: DEFAULT_PREFERENCES, startEmpty: true },
+      PLACES,
+    );
+    const page = render(empty);
+    expect(page).toContain("Select area");
+    expect(page).not.toContain("Choose for me");
   });
 });
