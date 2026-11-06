@@ -1,3 +1,16 @@
+// EXPERIMENT (branch experiment/mui-place-list): the day view rebuilt with MUI
+// components. Same content and actions as main; only the markup differs.
+// The layout classes (day, day__header, day__body, day__buttons, connector)
+// are kept so the column scrolling and narrow-screen rules still apply.
+import {
+  Alert,
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { rulesFor } from "../availability/seasonal-notes.ts";
 import type { CleanPlace } from "../data/place.ts";
 import { regenerateHint, travelLabel, warningText } from "../editor/copy.ts";
 import {
@@ -7,7 +20,6 @@ import {
 } from "../preferences/base-cities.ts";
 import type { ScheduledDay } from "../schedule/schedule.ts";
 import type { Trip, TripAction } from "../trip/trip.ts";
-import { rulesFor } from "../availability/seasonal-notes.ts";
 import { formatDate, formatTime, parseTimeInput } from "./format.ts";
 import { StopCard } from "./StopCard.tsx";
 
@@ -51,121 +63,145 @@ export const DayView = ({
     }
   };
 
+  const regenerate = () => dispatch({ type: "regenerate", day: index });
+
   return (
     <section className="day" aria-labelledby="day-title">
       {/* Fixed at the top of the column; only .day__body below it scrolls. */}
       <header className="day__header">
-        <h2 id="day-title">
+        <Typography id="day-title" component="h2" variant="h5" sx={{ mb: 1.5 }}>
           Day {index + 1} · {formatDate(day.date)}
-        </h2>
+        </Typography>
 
-        <div className="day__controls">
-          <label className="control">
-            <span className="control__label">City</span>
-            <select
-              value={day.dayArea ?? ""}
-              onChange={(e) =>
-                dispatch({
-                  type: "setDayArea",
-                  day: index,
-                  city: (e.target.value || null) as BaseCity | null,
-                })
-              }
-            >
-              <option value="">
-                {plan.baseCity
-                  ? `${plan.baseCity} · chosen for you`
-                  : "Choose for me"}
+        <Stack
+          direction="row"
+          spacing={1.5}
+          useFlexGap
+          sx={{ flexWrap: "wrap", mb: 1 }}
+        >
+          {/* Native select: works best with screen readers and phone keyboards. */}
+          <TextField
+            select
+            size="small"
+            label="City"
+            value={day.dayArea ?? ""}
+            onChange={(e) =>
+              dispatch({
+                type: "setDayArea",
+                day: index,
+                city: (e.target.value || null) as BaseCity | null,
+              })
+            }
+            slotProps={{
+              select: { native: true },
+              inputLabel: { shrink: true },
+            }}
+          >
+            <option value="">
+              {plan.baseCity
+                ? `${plan.baseCity} · chosen for you`
+                : "Choose for me"}
+            </option>
+            {BASE_CITY_NAMES.map((city) => (
+              <option key={city} value={city}>
+                {city}
               </option>
-              {BASE_CITY_NAMES.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </label>
+            ))}
+          </TextField>
+          <TextField
+            type="time"
+            size="small"
+            label="Day starts"
+            value={formatTime(day.window.start)}
+            onChange={(e) => setWindow("start", e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+          <TextField
+            type="time"
+            size="small"
+            label="Day ends"
+            value={formatTime(day.window.end)}
+            onChange={(e) => setWindow("end", e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+        </Stack>
 
-          <label className="control">
-            <span className="control__label">Day starts</span>
-            <input
-              type="time"
-              value={formatTime(day.window.start)}
-              onChange={(e) => setWindow("start", e.target.value)}
-            />
-          </label>
-          <label className="control">
-            <span className="control__label">Day ends</span>
-            <input
-              type="time"
-              value={formatTime(day.window.end)}
-              onChange={(e) => setWindow("end", e.target.value)}
-            />
-          </label>
-        </div>
-
-        <p className="day__summary">
+        <Typography sx={{ fontWeight: 600, my: 1 }}>
           {plan.stops.length} Stop{plan.stops.length === 1 ? "" : "s"} ·{" "}
           {warningCount} Warning{warningCount === 1 ? "" : "s"}
           {plan.stops.length > 0 && ` · ends ${formatTime(schedule.endsAt)}`}
-        </p>
+        </Typography>
 
-        <div className="day__buttons">
-          <button
-            type="button"
-            className="button"
+        <Stack
+          direction="row"
+          spacing={1}
+          useFlexGap
+          className="day__buttons"
+          sx={{ flexWrap: "wrap" }}
+        >
+          <Button
+            variant="outlined"
             title={regenerateHint(plan.stops)}
-            onClick={() => dispatch({ type: "regenerate", day: index })}
+            onClick={regenerate}
           >
             ↻ {plan.stops.length === 0 ? "Suggest this day" : "Regenerate day"}
-          </button>
-          <button
-            type="button"
-            className="button button--primary"
+          </Button>
+          <Button
+            variant="contained"
+            disableElevation
             onClick={() => dispatch({ type: "finalize", day: index })}
           >
             ✓ Finalize day
             {warningCount > 0 &&
               ` · ${warningCount} Warning${warningCount === 1 ? "" : "s"}`}
-          </button>
-        </div>
-        <p className="field__hint">{regenerateHint(plan.stops)}</p>
+          </Button>
+        </Stack>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+          {regenerateHint(plan.stops)}
+        </Typography>
       </header>
 
       {/* The scrolling part, like the Place list's results: banners, then Stops. */}
       <div className="day__body">
-        <div className="day__banners">
+        {/* role="status": announced politely, without interrupting (MUI's default is role="alert"). */}
+        <Stack spacing={1} sx={{ mt: 1.5 }}>
           {day.status === "finalized" && (
-            <p className="banner banner--ok">
-              ✓ Finalized. Changes reopen it for editing.
-            </p>
+            <Alert severity="success" role="status">
+              Finalized. Changes reopen it for editing.
+            </Alert>
           )}
           {day.status === "editing" && day.saved && (
-            <p className="banner">
-              Finalized earlier. Your changes save when you finalize again.{" "}
-              <button
-                type="button"
-                className="button button--link"
-                onClick={() => dispatch({ type: "revert", day: index })}
-              >
-                Revert to saved
-              </button>
-            </p>
+            <Alert
+              severity="info"
+              role="status"
+              action={
+                <Button
+                  size="small"
+                  onClick={() => dispatch({ type: "revert", day: index })}
+                >
+                  Revert to saved
+                </Button>
+              }
+            >
+              Finalized earlier. Your changes save when you finalize again.
+            </Alert>
           )}
           {pinnedElsewhere && (
-            <p className="banner">
+            <Alert
+              severity="info"
+              role="status"
+              action={
+                <Button size="small" onClick={regenerate}>
+                  Regenerate day
+                </Button>
+              }
+            >
               This day is now pinned to {day.dayArea}, but its Stops are in{" "}
-              {plan.baseCity}.{" "}
-              <button
-                type="button"
-                className="button button--link"
-                onClick={() => dispatch({ type: "regenerate", day: index })}
-              >
-                Regenerate day
-              </button>
-            </p>
+              {plan.baseCity}.
+            </Alert>
           )}
           {unplanned.length > 0 && (
-            <p className="banner">
+            <Alert severity="info" role="status">
               Must-Sees not planned yet:{" "}
               {unplanned
                 .map((id) => {
@@ -174,29 +210,41 @@ export const DayView = ({
                 })
                 .join(", ")}
               .
-            </p>
+            </Alert>
           )}
-        </div>
+        </Stack>
 
         {plan.stops.length === 0 ? (
-          <div className="empty">
-            <p>Day {index + 1} has no Stops yet.</p>
+          <Box
+            sx={{
+              mt: 2,
+              p: 3,
+              border: 1,
+              borderStyle: "dashed",
+              borderColor: "divider",
+              borderRadius: 1,
+              textAlign: "center",
+            }}
+          >
+            <Typography sx={{ mb: 1 }}>
+              Day {index + 1} has no Stops yet.
+            </Typography>
             {/* Two equal choices (design doc §3.9). */}
-            <div className="day__buttons empty__actions">
-              <button
-                type="button"
-                className="button"
-                onClick={() => dispatch({ type: "regenerate", day: index })}
-              >
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ justifyContent: "center" }}
+            >
+              <Button variant="outlined" onClick={regenerate}>
                 ↻ Suggest this day
-              </button>
-              <button type="button" className="button" onClick={onAddPlaces}>
+              </Button>
+              <Button variant="outlined" onClick={onAddPlaces}>
                 Add places →
-              </button>
-            </div>
-          </div>
+              </Button>
+            </Stack>
+          </Box>
         ) : (
-          <ol className="stops">
+          <Box component="ol" sx={{ listStyle: "none", m: 0, mt: 2, p: 0 }}>
             {schedule.stops.map((scheduled, i) => {
               const place = placesById.get(scheduled.placeId)!;
               const travelWarning = scheduled.warnings.find(
@@ -205,6 +253,7 @@ export const DayView = ({
               return (
                 <li key={scheduled.placeId}>
                   {scheduled.travel && (
+                    // The dashed "connector" line between cards stays plain CSS.
                     <p
                       className={`connector${travelWarning ? " connector--warning" : ""}`}
                     >
@@ -253,7 +302,7 @@ export const DayView = ({
                 </li>
               );
             })}
-          </ol>
+          </Box>
         )}
       </div>
     </section>

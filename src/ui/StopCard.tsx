@@ -1,3 +1,15 @@
+// EXPERIMENT (branch experiment/mui-place-list): the Stop card rebuilt with
+// MUI components. Same content and actions as main; only the markup differs.
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Chip,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { rulesFor } from "../availability/seasonal-notes.ts";
 import type { CleanPlace } from "../data/place.ts";
 import {
   formatDuration,
@@ -7,7 +19,6 @@ import {
 } from "../editor/copy.ts";
 import type { PlannedStop } from "../generator/generate-day.ts";
 import type { IsoDate } from "../hours/calendar.ts";
-import { rulesFor } from "../availability/seasonal-notes.ts";
 import type { ScheduledStop } from "../schedule/schedule.ts";
 import {
   chipsFor,
@@ -52,86 +63,156 @@ export const StopCard = ({
   const visitMinutes = scheduled.end - scheduled.start;
 
   return (
-    <article className="stop" aria-label={`Stop ${number}: ${place.name}`}>
-      <header className="stop__head">
-        <span className="stop__number" aria-hidden="true">
+    <Card
+      component="article"
+      variant="outlined"
+      aria-label={`Stop ${number}: ${place.name}`}
+      sx={{ p: 1.5 }}
+    >
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ alignItems: "baseline", flexWrap: "wrap" }}
+      >
+        {/* The number matches the map pin. */}
+        <Box
+          aria-hidden="true"
+          sx={{
+            display: "inline-grid",
+            placeItems: "center",
+            width: 26,
+            height: 26,
+            borderRadius: "50%",
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
+            fontSize: "0.8125rem",
+            fontWeight: 700,
+          }}
+        >
           {number}
-        </span>
-        <span className="stop__time">
+        </Box>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontVariantNumeric: "tabular-nums" }}
+        >
           {formatTime(scheduled.start)}–{formatTime(scheduled.end)}
-        </span>
-        <h3 className="stop__name">{place.name}</h3>
-      </header>
+        </Typography>
+        <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 600 }}>
+          {place.name}
+        </Typography>
+      </Stack>
 
-      <p className="stop__labels">
+      <Stack
+        direction="row"
+        spacing={0.75}
+        useFlexGap
+        sx={{ flexWrap: "wrap", mt: 1 }}
+      >
         {planned.origin === "must-see" && (
-          <span className="tag tag--kept">★ Must-See</span>
+          <Chip
+            size="small"
+            color="primary"
+            variant="outlined"
+            label="★ Must-See"
+          />
         )}
         {planned.origin === "added" && (
-          <span className="tag tag--kept">Added by you</span>
+          <Chip
+            size="small"
+            color="primary"
+            variant="outlined"
+            label="Added by you"
+          />
         )}
         {planned.meal && (
-          <span className="tag">
-            {planned.meal === "lunch" ? "Lunch" : "Dinner"}
-          </span>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={planned.meal === "lunch" ? "Lunch" : "Dinner"}
+          />
         )}
-        <span className="tag tag--quiet">
-          {hoursLabel(place, scheduled.availability)}
-        </span>
-        <span className="tag tag--quiet">{formatDuration(visitMinutes)}</span>
+        {/* Hours Status and duration: quieter than Warnings (design doc §3.6). */}
+        <Chip
+          size="small"
+          variant="outlined"
+          sx={{ color: "text.secondary" }}
+          label={hoursLabel(place, scheduled.availability)}
+        />
+        <Chip
+          size="small"
+          variant="outlined"
+          sx={{ color: "text.secondary" }}
+          label={formatDuration(visitMinutes)}
+        />
         {scheduled.start > scheduled.arrive && (
-          <span className="tag tag--quiet">
-            Arrive {formatTime(scheduled.arrive)}, starts{" "}
-            {formatTime(scheduled.start)}
-          </span>
+          <Chip
+            size="small"
+            variant="outlined"
+            sx={{ color: "text.secondary" }}
+            label={`Arrive ${formatTime(scheduled.arrive)}, starts ${formatTime(scheduled.start)}`}
+          />
         )}
-      </p>
+      </Stack>
 
       {chips.length > 0 && (
-        <p className="stop__why">
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
           why: {chips.slice(0, MAX_CHIPS).map(reasonLabel).join(" · ")}
           {chips.length > MAX_CHIPS && ` · +${chips.length - MAX_CHIPS}`}
-        </p>
+        </Typography>
       )}
 
       {warnings.length > 0 && (
-        <ul className="warnings">
+        <Stack
+          component="ul"
+          spacing={0.5}
+          sx={{ listStyle: "none", m: 0, mt: 1, p: 0 }}
+        >
           {warnings.map((w) => (
-            <li key={w.kind} className="warning">
-              <span aria-hidden="true">!</span>{" "}
-              {warningText(w, { date, rules: rulesFor(place.id) })}
+            <li key={w.kind}>
+              {/* role="note": MUI's default role="alert" would interrupt a
+                  screen reader every time the schedule redraws. */}
+              <Alert
+                severity="warning"
+                role="note"
+                icon={<span aria-hidden="true">!</span>}
+                sx={{ py: 0 }}
+              >
+                {warningText(w, { date, rules: rulesFor(place.id) })}
+              </Alert>
             </li>
           ))}
-        </ul>
+        </Stack>
       )}
 
-      <div className="stop__actions">
-        <button
-          type="button"
-          className="button button--small"
+      <Stack direction="row" spacing={0.75} sx={{ mt: 1.25 }}>
+        <Button
+          size="small"
+          variant="outlined"
           onClick={onMoveUp}
           disabled={isFirst}
           aria-label={`Move ${place.name} up`}
         >
           ↑
-        </button>
-        <button
-          type="button"
-          className="button button--small"
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
           onClick={onMoveDown}
           disabled={isLast}
           aria-label={`Move ${place.name} down`}
         >
           ↓
-        </button>
-        <button
-          type="button"
-          className="button button--small"
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          color="inherit"
           onClick={onRemove}
         >
           Remove
-        </button>
-      </div>
-    </article>
+        </Button>
+      </Stack>
+    </Card>
   );
 };
