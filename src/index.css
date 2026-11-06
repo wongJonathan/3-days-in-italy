@@ -236,8 +236,6 @@ body {
   box-sizing: border-box;
 }
 
-
-
 /* The highlighted Stop's pin (Trip Overview): bigger, with an accent halo */
 .map-pin--active {
   width: 36px;
