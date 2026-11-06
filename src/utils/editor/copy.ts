@@ -11,6 +11,10 @@ import type { BudgetGroup, PriceLevel } from "../scoring/budget.ts";
 import type { Reason } from "../scoring/score.ts";
 import type { TravelTime } from "../travel/travel-time.ts";
 
+/** A count with its noun: 1 → "1 Warning", 2 → "2 Warnings". */
+export const countLabel = (count: number, noun: string): string =>
+  `${count} ${noun}${count === 1 ? "" : "s"}`;
+
 /** 25 → "25 min", 60 → "1 h", 160 → "2 h 40". */
 export const formatDuration = (minutes: number): string => {
   if (minutes < 60) return `${minutes} min`;

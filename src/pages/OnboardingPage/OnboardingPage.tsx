@@ -38,6 +38,7 @@ import type { PriceLevel } from "../../utils/scoring/budget.ts";
 import type { TransportMode } from "../../utils/travel/travel-time.ts";
 import type { NewTrip } from "../../stores/trip.ts";
 import { formatDate } from "../../utils/format.ts";
+import { toggle } from "../../utils/list.ts";
 
 type Props = {
   places: CleanPlace[];
@@ -83,9 +84,6 @@ const SEGMENTED = {
     fontWeight: 600,
   },
 } as const;
-
-const toggle = <T,>(items: T[], item: T): T[] =>
-  items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
 
 /** A labelled group of settings inside "Tune it". */
 const Setting = ({

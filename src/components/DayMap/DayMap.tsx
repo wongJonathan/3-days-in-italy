@@ -22,15 +22,30 @@ const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
+/**
+ * Every pin made so far, by number and warning. react-leaflet rebuilds a
+ * marker's DOM whenever its `icon` prop is a new object, so each pin is
+ * created once and reused on every render. There are only a few (one per
+ * Stop number, with or without a Warning), so the cache stays tiny.
+ */
+const pins = new Map<string, L.DivIcon>();
+
 /** A numbered pin matching the Stop card's badge. HTML, so no image files are needed. */
-const pinIcon = (number: number, hasWarning: boolean) =>
-  L.divIcon({
-    className: "",
-    html: `<span class="map-pin${hasWarning ? " map-pin--warning" : ""}">${number}</span>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    tooltipAnchor: [14, 0],
-  });
+const pinIcon = (number: number, hasWarning: boolean): L.DivIcon => {
+  const key = `${number}-${hasWarning}`;
+  let pin = pins.get(key);
+  if (!pin) {
+    pin = L.divIcon({
+      className: "",
+      html: `<span class="map-pin${hasWarning ? " map-pin--warning" : ""}">${number}</span>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      tooltipAnchor: [14, 0],
+    });
+    pins.set(key, pin);
+  }
+  return pin;
+};
 
 /** Moves the view when the day's focus changes (Leaflet only reads `center` once, on creation). */
 const FocusView = ({ focus }: { focus: MapFocus }) => {

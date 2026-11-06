@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import type { CleanPlace } from "../../utils/data/place.ts";
+import { countLabel } from "../../utils/editor/copy.ts";
 import { dayMapModel } from "../../utils/editor/map-model.ts";
 import { scheduleStops } from "../../utils/generator/generate-day.ts";
 import {
@@ -181,7 +182,7 @@ export const EditorPage = ({
         <div className="mobile-bar">
           <span className="mobile-bar__warnings">
             {warningCount > 0
-              ? `! ${warningCount} Warning${warningCount === 1 ? "" : "s"}`
+              ? `! ${countLabel(warningCount, "Warning")}`
               : "No Warnings"}
           </span>
           <Button

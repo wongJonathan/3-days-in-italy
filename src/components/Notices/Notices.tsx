@@ -1,4 +1,5 @@
 import { Alert, Button, Stack } from "@mui/material";
+import { countLabel } from "../../utils/editor/copy.ts";
 
 type Props = {
   /** False in private mode or with a full quota (from useTrip). */
@@ -29,10 +30,10 @@ export const Notices = ({ canSave, removedStops, onDismissRemoved }: Props) =>
             </Button>
           }
         >
-          {removedStops} Stop
+          {countLabel(removedStops, "Stop")}{" "}
           {removedStops === 1
-            ? " no longer exists and was"
-            : "s no longer exist and were"}{" "}
+            ? "no longer exists and was"
+            : "no longer exist and were"}{" "}
           removed.
         </Alert>
       )}

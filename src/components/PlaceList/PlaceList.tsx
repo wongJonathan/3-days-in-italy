@@ -21,7 +21,6 @@ import {
   formatDuration,
   groupTitle,
   hoursLabel,
-  reasonLabel,
 } from "../../utils/editor/copy.ts";
 import {
   buildPlaceList,
@@ -35,6 +34,9 @@ import { INTERESTS, interestLabel } from "../../utils/preferences/interests.ts";
 import { chipsFor } from "../../utils/scoring/score.ts";
 import type { Trip, TripAction } from "../../stores/trip.ts";
 import { formatDate } from "../../utils/format.ts";
+import { toggle } from "../../utils/list.ts";
+import { EmptyState } from "../EmptyState/EmptyState.tsx";
+import { WhyLine } from "../WhyLine/WhyLine.tsx";
 
 type Props = {
   trip: Trip;
@@ -44,13 +46,8 @@ type Props = {
   onAdded: (placeId: string) => void;
 };
 
-const MAX_CHIPS = 3;
-
 /** The search box id, so "Add places →" on an empty day can focus it. */
 export const PLACE_SEARCH_ID = "place-search";
-
-const toggle = <T,>(items: T[], item: T): T[] =>
-  items.includes(item) ? items.filter((i) => i !== item) : [...items, item];
 
 /** A group heading with its count (also the sticky heading inside the scroll). */
 const GroupHeading = ({ title, count }: { title: string; count: number }) => (
@@ -138,11 +135,7 @@ export const PlaceList = ({ trip, places, dispatch, onAdded }: Props) => {
             <Typography variant="body2" color="text.secondary">
               {hoursLabel(place, r.availability)}
             </Typography>
-            {chips.length > 0 && (
-              <Typography variant="body2" color="text.secondary">
-                why: {chips.slice(0, MAX_CHIPS).map(reasonLabel).join(" · ")}
-              </Typography>
-            )}
+            <WhyLine chips={chips} />
             <Stack
               direction="row"
               spacing={0.5}
@@ -310,58 +303,37 @@ export const PlaceList = ({ trip, places, dispatch, onAdded }: Props) => {
       {/* Only the results scroll; search and filters stay in view above them. */}
       <div className="place-list__results">
         {total === 0 ? (
-          <Box
-            sx={{
-              mt: 2,
-              p: 3,
-              border: 1,
-              borderStyle: "dashed",
-              borderColor: "divider",
-              borderRadius: 1,
-              textAlign: "center",
-            }}
-          >
-            <Typography sx={{ mb: 1 }}>No places match.</Typography>
-            <Stack
-              direction="row"
-              spacing={1}
-              useFlexGap
-              sx={{ flexWrap: "wrap", justifyContent: "center" }}
-            >
-              {filters.query && (
-                <Button
-                  variant="outlined"
-                  onClick={() => update({ query: "" })}
-                >
-                  Clear search
-                </Button>
-              )}
-              {filters.openOnly && (
-                <Button
-                  variant="outlined"
-                  onClick={() => update({ openOnly: false })}
-                >
-                  Show closed
-                </Button>
-              )}
-              {filters.interests.length > 0 && (
-                <Button
-                  variant="outlined"
-                  onClick={() => update({ interests: [] })}
-                >
-                  Any interest
-                </Button>
-              )}
-              {filters.scope !== "all" && (
-                <Button
-                  variant="outlined"
-                  onClick={() => update({ scope: "all" })}
-                >
-                  All of Italy
-                </Button>
-              )}
-            </Stack>
-          </Box>
+          <EmptyState message="No places match.">
+            {filters.query && (
+              <Button variant="outlined" onClick={() => update({ query: "" })}>
+                Clear search
+              </Button>
+            )}
+            {filters.openOnly && (
+              <Button
+                variant="outlined"
+                onClick={() => update({ openOnly: false })}
+              >
+                Show closed
+              </Button>
+            )}
+            {filters.interests.length > 0 && (
+              <Button
+                variant="outlined"
+                onClick={() => update({ interests: [] })}
+              >
+                Any interest
+              </Button>
+            )}
+            {filters.scope !== "all" && (
+              <Button
+                variant="outlined"
+                onClick={() => update({ scope: "all" })}
+              >
+                All of Italy
+              </Button>
+            )}
+          </EmptyState>
         ) : (
           <>
             {list.groups.map(({ group, rows }) => {

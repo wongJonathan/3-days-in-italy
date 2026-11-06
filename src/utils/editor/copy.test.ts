@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { PlannedStop } from "../generator/generate-day.ts";
 import {
+  countLabel,
   emptyGroupText,
   formatDuration,
   groupTitle,
@@ -15,6 +16,14 @@ const t = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
 };
+
+describe("countLabel", () => {
+  it("uses the singular only for exactly one", () => {
+    expect(countLabel(1, "Warning")).toBe("1 Warning");
+    expect(countLabel(0, "Warning")).toBe("0 Warnings");
+    expect(countLabel(3, "Stop")).toBe("3 Stops");
+  });
+});
 
 describe("formatDuration", () => {
   it("uses minutes under an hour, then hours and minutes", () => {

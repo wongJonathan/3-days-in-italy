@@ -10,6 +10,9 @@ import { OnboardingPage } from "../../pages/OnboardingPage/OnboardingPage.tsx";
 import { theme } from "../../utils/theme.ts";
 import { cssVariables } from "../../utils/colors.ts";
 
+/** The colour tokens as CSS variables (--accent, …). Static, so built once. */
+const ROOT_VARIABLES = { ":root": cssVariables() };
+
 /** A saved Trip opens straight away in the editor; otherwise onboarding. */
 const App = () => {
   const { trip, dispatch, start, reset, canSave, removedStops } =
@@ -29,8 +32,7 @@ const App = () => {
   // MUI theme for every component. No CssBaseline (MUI's global reset): index.css sets the base styles.
   return (
     <ThemeProvider theme={theme}>
-      {/* The colour tokens as CSS variables (--accent, …), from the single source. */}
-      <GlobalStyles styles={{ ":root": cssVariables() }} />
+      <GlobalStyles styles={ROOT_VARIABLES} />
       {trip ? (
         <EditorPage
           trip={trip}

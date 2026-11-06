@@ -7,6 +7,7 @@ import {
   type PlannedStop,
 } from "../utils/generator/generate-day.ts";
 import { addDays, type IsoDate } from "../utils/hours/calendar.ts";
+import { toggle } from "../utils/list.ts";
 import type { BaseCity } from "../utils/preferences/base-cities.ts";
 import type { Preferences } from "../utils/preferences/preferences.ts";
 import {
@@ -117,6 +118,7 @@ export const tripReducer = (places: CleanPlace[]) => {
         i !== index && d.plan ? [d.plan] : [],
       ),
       kept,
+      placesById,
     }).day;
   };
 
@@ -249,18 +251,14 @@ export const tripReducer = (places: CleanPlace[]) => {
           ? withDay(trip, action.day, { dayArea: action.city })
           : trip;
 
-      case "toggleMustSee": {
-        const { mustSees } = trip.prefs;
+      case "toggleMustSee":
         return {
           ...trip,
           prefs: {
             ...trip.prefs,
-            mustSees: mustSees.includes(action.placeId)
-              ? mustSees.filter((id) => id !== action.placeId)
-              : [...mustSees, action.placeId],
+            mustSees: toggle(trip.prefs.mustSees, action.placeId),
           },
         };
-      }
     }
   };
   return reduce;

@@ -62,6 +62,11 @@ export type GenerateDayInput = {
   otherDays: PlannedDay[];
   /** Stops to keep when regenerating (Must-Sees and hand-added), in order. */
   kept: PlannedStop[];
+  /**
+   * `places` by id. Callers that already have one (tripReducer) pass it so it
+   * isn't rebuilt on every generate; otherwise it is built here.
+   */
+  placesById?: Map<string, CleanPlace>;
 };
 
 export type GeneratedDay = {
@@ -98,8 +103,8 @@ export const generateDay = ({
   dayArea,
   otherDays,
   kept,
+  placesById = new Map(places.map((p) => [p.id, p])),
 }: GenerateDayInput): GeneratedDay => {
-  const placesById = new Map(places.map((p) => [p.id, p]));
   const used = new Set(otherDays.flatMap((d) => d.stops.map((s) => s.placeId)));
   const keptIds = new Set(kept.map((s) => s.placeId));
   const sightsTarget = SIGHTS_PER_PACE[prefs.pace];

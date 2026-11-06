@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CleanPlace } from "../utils/data/place.ts";
-import {
-  canUseStorage,
-  parseTrip,
-  serializeTrip,
-  STORAGE_KEY,
-} from "./storage.ts";
+import { canUseStorage, parseTrip, saveTrip, STORAGE_KEY } from "./storage.ts";
 import {
   createTrip,
   tripReducer,
@@ -44,11 +39,15 @@ export const useTrip = (places: CleanPlace[]) => {
       : null,
   );
   const [trip, setTrip] = useState<Trip | null>(loaded?.trip ?? null);
+  // The last save worked. Starts true: canUseStorage already tried a write.
+  const [saved, setSaved] = useState(true);
 
   useEffect(() => {
     if (!storage) return;
-    if (trip) storage.setItem(STORAGE_KEY, serializeTrip(trip));
-    else storage.removeItem(STORAGE_KEY);
+    // Syncing with an external system (localStorage) and keeping its result is
+    // what effects are for. React skips the re-render while the value stays true.
+    // oxlint-disable-next-line react/set-state-in-effect
+    setSaved(saveTrip(storage, trip));
   }, [storage, trip]);
 
   return {
@@ -59,7 +58,7 @@ export const useTrip = (places: CleanPlace[]) => {
     /** Forgets the Trip and goes back to onboarding. */
     reset: () => setTrip(null),
     /** False in private mode or with a full quota: the Trip won't survive a reload. */
-    canSave: storage !== undefined,
+    canSave: storage !== undefined && saved,
     /** Stops dropped on load because their Place left the data. */
     removedStops: loaded?.removedStops ?? 0,
   };

@@ -13,7 +13,6 @@ import type { CleanPlace } from "../../utils/data/place.ts";
 import {
   formatDuration,
   hoursLabel,
-  reasonLabel,
   warningText,
 } from "../../utils/editor/copy.ts";
 import type { PlannedStop } from "../../utils/generator/generate-day.ts";
@@ -25,6 +24,7 @@ import {
   type ScoringPreferences,
 } from "../../utils/scoring/score.ts";
 import { formatTime } from "../../utils/format.ts";
+import { WhyLine } from "../WhyLine/WhyLine.tsx";
 
 type Props = {
   number: number;
@@ -52,8 +52,6 @@ type Props = {
  * move, so pressing ↑ twice does it twice.
  */
 export type Refocus = { direction: "up" | "down"; token: number };
-
-const MAX_CHIPS = 3;
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -212,12 +210,7 @@ export const StopCard = ({
         )}
       </Stack>
 
-      {chips.length > 0 && (
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-          why: {chips.slice(0, MAX_CHIPS).map(reasonLabel).join(" · ")}
-          {chips.length > MAX_CHIPS && ` · +${chips.length - MAX_CHIPS}`}
-        </Typography>
-      )}
+      <WhyLine chips={chips} showHiddenCount />
 
       {warnings.length > 0 && (
         <Stack

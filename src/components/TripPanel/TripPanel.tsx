@@ -7,6 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { countLabel } from "../../utils/editor/copy.ts";
 import { tuneSummary } from "../../utils/onboarding/onboarding.ts";
 import type { ScheduledDay } from "../../utils/schedule/schedule.ts";
 import type { DayStatus, Trip } from "../../stores/trip.ts";
@@ -80,9 +81,9 @@ export const TripPanel = ({ trip, schedules, onOpen, onReset }: Props) => {
                     {day.plan
                       ? [
                           day.plan.baseCity ?? "No city yet",
-                          `${day.plan.stops.length} Stops`,
+                          countLabel(day.plan.stops.length, "Stop"),
                           schedule && schedule.warningCount > 0
-                            ? `! ${schedule.warningCount} Warning${schedule.warningCount === 1 ? "" : "s"}`
+                            ? `! ${countLabel(schedule.warningCount, "Warning")}`
                             : null,
                         ]
                           .filter(Boolean)

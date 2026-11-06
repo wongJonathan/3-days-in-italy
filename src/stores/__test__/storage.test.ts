@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_PREFERENCES } from "../../utils/preferences/preferences.ts";
 import { DEFAULT_DAY_WINDOW } from "../../utils/schedule/schedule.ts";
-import { canUseStorage, parseTrip, serializeTrip } from "../storage.ts";
+import {
+  canUseStorage,
+  parseTrip,
+  saveTrip,
+  serializeTrip,
+  STORAGE_KEY,
+} from "../storage.ts";
 import type { Trip } from "../trip.ts";
 
 const stop = (placeId: string) => ({
@@ -90,21 +96,28 @@ describe("serializeTrip / parseTrip", () => {
   });
 });
 
-describe("canUseStorage", () => {
-  const memoryStorage = (): Storage => {
-    const data = new Map<string, string>();
-    return {
-      get length() {
-        return data.size;
-      },
-      clear: () => data.clear(),
-      getItem: (k) => data.get(k) ?? null,
-      key: (i) => [...data.keys()][i] ?? null,
-      removeItem: (k) => void data.delete(k),
-      setItem: (k, v) => void data.set(k, v),
-    };
+const memoryStorage = (): Storage => {
+  const data = new Map<string, string>();
+  return {
+    get length() {
+      return data.size;
+    },
+    clear: () => data.clear(),
+    getItem: (k) => data.get(k) ?? null,
+    key: (i) => [...data.keys()][i] ?? null,
+    removeItem: (k) => void data.delete(k),
+    setItem: (k, v) => void data.set(k, v),
   };
+};
 
+const fullStorage = (): Storage => ({
+  ...memoryStorage(),
+  setItem: () => {
+    throw new Error("QuotaExceededError");
+  },
+});
+
+describe("canUseStorage", () => {
   it("is true for working storage", () => {
     expect(canUseStorage(memoryStorage())).toBe(true);
   });
@@ -114,12 +127,25 @@ describe("canUseStorage", () => {
   });
 
   it("is false when writing throws (private mode, quota full)", () => {
-    const full = {
-      ...memoryStorage(),
-      setItem: () => {
-        throw new Error("QuotaExceededError");
-      },
-    };
-    expect(canUseStorage(full)).toBe(false);
+    expect(canUseStorage(fullStorage())).toBe(false);
+  });
+});
+
+describe("saveTrip", () => {
+  it("writes the Trip and reports success", () => {
+    const storage = memoryStorage();
+    expect(saveTrip(storage, TRIP)).toBe(true);
+    expect(storage.getItem(STORAGE_KEY)).toBe(serializeTrip(TRIP));
+  });
+
+  it("clears the saved Trip when there is none (Start over)", () => {
+    const storage = memoryStorage();
+    saveTrip(storage, TRIP);
+    expect(saveTrip(storage, null)).toBe(true);
+    expect(storage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it("reports failure instead of throwing when the quota fills up later", () => {
+    expect(saveTrip(fullStorage(), TRIP)).toBe(false);
   });
 });

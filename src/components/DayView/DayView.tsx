@@ -12,6 +12,7 @@ import { useState } from "react";
 import { rulesFor } from "../../utils/availability/seasonal-notes.ts";
 import type { CleanPlace } from "../../utils/data/place.ts";
 import {
+  countLabel,
   regenerateHint,
   travelLabel,
   warningText,
@@ -26,6 +27,7 @@ import {
 import type { ScheduledDay } from "../../utils/schedule/schedule.ts";
 import type { Trip, TripAction } from "../../stores/trip.ts";
 import { formatDate, formatTime, parseTimeInput } from "../../utils/format.ts";
+import { EmptyState } from "../EmptyState/EmptyState.tsx";
 import { StopCard } from "./StopCard.tsx";
 
 /** The last ↑ / ↓ move, worked out when it was clicked (see `move`). */
@@ -129,6 +131,8 @@ export const DayView = ({
   };
 
   const regenerate = () => dispatch({ type: "regenerate", day: index });
+  // Shown twice: as the button's tooltip and as the line under the buttons.
+  const hint = regenerateHint(plan.stops);
 
   return (
     <section className="day" aria-labelledby="day-title">
@@ -192,8 +196,8 @@ export const DayView = ({
         </Stack>
 
         <Typography sx={{ fontWeight: 600, my: 1 }}>
-          {plan.stops.length} Stop{plan.stops.length === 1 ? "" : "s"} ·{" "}
-          {warningCount} Warning{warningCount === 1 ? "" : "s"}
+          {countLabel(plan.stops.length, "Stop")} ·{" "}
+          {countLabel(warningCount, "Warning")}
           {plan.stops.length > 0 && ` · ends ${formatTime(schedule.endsAt)}`}
         </Typography>
 
@@ -204,11 +208,7 @@ export const DayView = ({
           className="day__buttons"
           sx={{ flexWrap: "wrap" }}
         >
-          <Button
-            variant="outlined"
-            title={regenerateHint(plan.stops)}
-            onClick={regenerate}
-          >
+          <Button variant="outlined" title={hint} onClick={regenerate}>
             ↻ {plan.stops.length === 0 ? "Suggest this day" : "Regenerate day"}
           </Button>
           <Button
@@ -217,12 +217,11 @@ export const DayView = ({
             onClick={() => dispatch({ type: "finalize", day: index })}
           >
             ✓ Finalize day
-            {warningCount > 0 &&
-              ` · ${warningCount} Warning${warningCount === 1 ? "" : "s"}`}
+            {warningCount > 0 && ` · ${countLabel(warningCount, "Warning")}`}
           </Button>
         </Stack>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-          {regenerateHint(plan.stops)}
+          {hint}
         </Typography>
       </header>
 
@@ -280,34 +279,15 @@ export const DayView = ({
         </Stack>
 
         {plan.stops.length === 0 ? (
-          <Box
-            sx={{
-              mt: 2,
-              p: 3,
-              border: 1,
-              borderStyle: "dashed",
-              borderColor: "divider",
-              borderRadius: 1,
-              textAlign: "center",
-            }}
-          >
-            <Typography sx={{ mb: 1 }}>
-              Day {index + 1} has no Stops yet.
-            </Typography>
-            {/* Two equal choices (design doc §3.9). */}
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{ justifyContent: "center" }}
-            >
-              <Button variant="outlined" onClick={regenerate}>
-                ↻ Suggest this day
-              </Button>
-              <Button variant="outlined" onClick={onAddPlaces}>
-                Add places →
-              </Button>
-            </Stack>
-          </Box>
+          // Two equal choices (design doc §3.9).
+          <EmptyState message={`Day ${index + 1} has no Stops yet.`}>
+            <Button variant="outlined" onClick={regenerate}>
+              ↻ Suggest this day
+            </Button>
+            <Button variant="outlined" onClick={onAddPlaces}>
+              Add places →
+            </Button>
+          </EmptyState>
         ) : (
           <Box component="ol" sx={{ listStyle: "none", m: 0, mt: 2, p: 0 }}>
             {schedule.stops.map((scheduled, i) => {

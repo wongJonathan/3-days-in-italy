@@ -12,6 +12,21 @@ export type LoadedTrip = {
 export const serializeTrip = (trip: Trip): string => JSON.stringify(trip);
 
 /**
+ * Saves the Trip, or clears it when there is none (Start over). Returns false
+ * when the browser refuses, e.g. the quota filled up after the startup check
+ * passed, so the app can show its "can't save" notice instead of crashing.
+ */
+export const saveTrip = (storage: Storage, trip: Trip | null): boolean => {
+  try {
+    if (trip) storage.setItem(STORAGE_KEY, serializeTrip(trip));
+    else storage.removeItem(STORAGE_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Reads a saved Trip. Returns null when nothing usable is saved (missing,
  * unreadable, or from another version), so the app simply starts fresh.
  * Stops whose Place has left the data are dropped and counted, so the UI
